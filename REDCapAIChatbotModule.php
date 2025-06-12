@@ -79,15 +79,16 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
      */
     public function docsForFolder($folder_id)
     {
+        $docIds = [];
         $sql = "SELECT de.doc_id FROM redcap_docs_folders_files f, redcap_docs_to_edocs de
                 where f.folder_id = $folder_id and de.docs_id = f.docs_id";
 
         $result = $this->query($sql);
 
-        $docIds = array_column(
-            $result->fetch_all(MYSQLI_ASSOC),
-            'doc_id'
-        );
+        $rows = $result->fetch_all(MYSQLI_ASSOC);
+        foreach ($rows as $row) {
+            $docIds[] = $row['doc_id'];
+        }
         return $docIds;
     }
 
