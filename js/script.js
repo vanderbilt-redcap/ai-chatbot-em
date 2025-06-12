@@ -100,7 +100,7 @@ $( document ).ready(function() {
                     }
                 })
                 .fail(function(data) {
-                    alert("fail");
+                    alert("fail"+JSON.stringify(data));
                     console.log(data);
                 })
                 .always(function(data) {
