@@ -58,11 +58,11 @@ class Api
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        if (PROXY_HOSTNAME != '') {
+        /*if (PROXY_HOSTNAME != '') {
             curl_setopt($ch, CURLOPT_PROXY, PROXY_HOSTNAME); // If using a proxy
             curl_setopt($ch, CURLOPT_PROXYUSERPWD, PROXY_USERNAME_PASSWORD); // If using a proxy
-        }
-
+        }*/
+echo "before exec"; die;
         $response = curl_exec($ch);
         $res = json_decode($response, true);
         $err = curl_error($ch);
