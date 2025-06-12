@@ -100,7 +100,8 @@ $( document ).ready(function() {
                     }
                 })
                 .fail(function(data) {
-                    alert("failed "+data);
+                    alert("fail");
+                    console.log(data);
                 })
                 .always(function(data) {
 
