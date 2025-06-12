@@ -14,7 +14,6 @@ class OpenAIFiles
         $vsId = $this->module->vectorStoreIdforfolder($folder_id, $project_id);
 
         if (is_null($vsId) || $vsId == '') {
-            print "inside if"; die;
             $endpoint = $this->endpoint;
             $api_key = $this->api_key;
             $api_version = $this->api_version;

@@ -84,11 +84,10 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
 
         $result = $this->query($sql);
 
-        $docIds = [];
-        foreach ($result as $i => $arr) {
-
-            $docIds[] = $arr['doc_id'];
-        }
+        $docIds = array_column(
+            $result->fetch_all(MYSQLI_ASSOC),
+            'doc_id'
+        );
         return $docIds;
     }
 
