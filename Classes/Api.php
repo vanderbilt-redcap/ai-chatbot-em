@@ -99,7 +99,7 @@ class Api
         $curl = curl_init();
 
         curl_setopt_array($curl, $curl_info);
-        //echo "before curl exec";
+        echo "before curl exec";
         echo json_encode($curl_info); die;
 
         $response = curl_exec($curl);
