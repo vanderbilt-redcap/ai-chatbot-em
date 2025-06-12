@@ -36,6 +36,7 @@ class OpenAIFiles
                     'file' => $curlFile,
                 ];
                 $resFileUpload = Api::curlAPIPost($api_key, $endpoint . "files?api-version=" . $api_version, $data, $headers);
+                var_dump($resFileUpload); die;
                 $fileIds[] = $resFileUpload['id'];
             }
 
