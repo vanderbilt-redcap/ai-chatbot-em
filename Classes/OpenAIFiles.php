@@ -24,7 +24,9 @@ class OpenAIFiles
                 exit;
             }
             foreach ($docIds as $docId) {
+                echo $docId."--";
                 $fileAttr = \Files::getEdocContentsAttributes($docId);
+                echo json_encode($fileAttr);
                 $curlFile = new \CURLStringFile($fileAttr[2], $fileAttr[1], $fileAttr[0]);
                 $headers = [
                     'Content-Type: multipart/form-data',
@@ -36,9 +38,10 @@ class OpenAIFiles
                     'file' => $curlFile,
                 ];
                 $resFileUpload = Api::curlAPIPost($api_key, $endpoint . "files?api-version=" . $api_version, $data, $headers);
-                var_dump($resFileUpload); die;
+                echo json_encode($resFileUpload);
                 $fileIds[] = $resFileUpload['id'];
             }
+            die;
 
             /*************** STEP 2: Create New Vector Store *****************************/
             $headers = [
