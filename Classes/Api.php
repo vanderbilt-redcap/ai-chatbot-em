@@ -77,7 +77,7 @@ class Api
     }
     public static function sendRequest($url, $method, $options = [], $headers)
     {
-        echo "inside sendreq"; die;
+
         //$post_fields = json_encode($options);
         $post_fields = $options;
 
@@ -97,7 +97,7 @@ class Api
         if ($options == []) {
             unset($curl_info[CURLOPT_POSTFIELDS]);
         }
-
+        echo "before curl init"; die;
         $curl = curl_init();
 
         curl_setopt_array($curl, $curl_info);
