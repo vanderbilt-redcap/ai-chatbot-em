@@ -59,6 +59,7 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
      */
     public function vectorStoreIdforfolder($folder_id, $project_id)
     {
+        die("folder list");
         $sql = "SELECT vs_id
                 FROM redcap_folders_vector_stores_items WHERE project_id = '" . db_escape($project_id) . "'
                 AND folder_id = '" . db_escape($folder_id) . "'
