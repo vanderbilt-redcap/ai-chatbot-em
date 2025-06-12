@@ -86,7 +86,6 @@ class Api
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING       => '',
             CURLOPT_MAXREDIRS      => 10,
-            //CURLOPT_TIMEOUT        => $this->timeout,
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST  => $method,
@@ -101,9 +100,9 @@ class Api
         $curl = curl_init();
 
         curl_setopt_array($curl, $curl_info);
-
+        echo "before curl exec";
+        echo json_encode($curl_info); die;
         $response = curl_exec($curl);
-        echo "after curl exec"; die;
 
         $info           = curl_getinfo($curl);
 
