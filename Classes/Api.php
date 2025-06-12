@@ -49,19 +49,17 @@ class Api
                 'OpenAI-Beta: assistants=v1',
             ];
         }
+        return self::sendRequest($url, 'POST', $data, $headers);
 
 
-        $ch = curl_init($url);
+
+        /*$ch = curl_init($url);
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        /*if (PROXY_HOSTNAME != '') {
-            curl_setopt($ch, CURLOPT_PROXY, PROXY_HOSTNAME); // If using a proxy
-            curl_setopt($ch, CURLOPT_PROXYUSERPWD, PROXY_USERNAME_PASSWORD); // If using a proxy
-        }*/
 
         $response = curl_exec($ch);
         echo "before exec"; die;
@@ -74,7 +72,46 @@ class Api
         } else {
             echo("success"); die;
             return $res;
+        }*/
+
+    }
+    private function sendRequest($url, $method, $options = [])
+    {
+        $post_fields = json_encode($options);
+
+        if (array_key_exists('file', $options) || array_key_exists('image', $options)) {
+            $this->headers[0] = $this->contentTypes["multipart/form-data"];
+            $post_fields      = $options;
+        } else {
+            $this->headers[0] = $this->contentTypes["application/json"];
+        }
+        $curl_info = [
+            CURLOPT_URL            => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING       => '',
+            CURLOPT_MAXREDIRS      => 10,
+            CURLOPT_TIMEOUT        => $this->timeout,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST  => $method,
+            CURLOPT_POSTFIELDS     => $post_fields,
+            CURLOPT_HTTPHEADER     => $this->headers,
+        ];
+
+        if ($options == []) {
+            unset($curl_info[CURLOPT_POSTFIELDS]);
         }
 
+        $curl = curl_init();
+
+        curl_setopt_array($curl, $curl_info);
+        $response = curl_exec($curl);
+
+        $info           = curl_getinfo($curl);
+        $this->curlInfo = $info;
+
+        curl_close($curl);
+
+        return $response;
     }
 }
