@@ -12,26 +12,19 @@ class OpenAIFiles
     public function uploadToVectorStore($folder_id, $project_id)
     {
         $vsId = $this->module->vectorStoreIdforfolder($folder_id, $project_id);
-        if (is_null($vsId)) {
-            die("nullval");
-        }
-        if ($vsId == '') {
-            die("blnlval");
-        }
-        if (is_null($vsId) || $vsId == "") {
+
+        if (is_null($vsId) || $vsId == '') {
             $endpoint = $this->endpoint;
             $api_key = $this->api_key;
             $api_version = $this->api_version;
             /*************** STEP 1: Upload a Files from folder *****************************/
             $docIds = $this->module->docsForFolder($folder_id);
-            var_dump($docIds);
             if (empty($docIds)) {
                 print "<b>No files available in this folder.</b>";
                 exit;
             }
             foreach ($docIds as $docId) {
                 $fileAttr = \Files::getEdocContentsAttributes($docId);
-                var_dump($fileAttr);
                 $curlFile = new \CURLStringFile($fileAttr[2], $fileAttr[1], $fileAttr[0]);
                 $headers = [
                     'Content-Type: multipart/form-data',
@@ -77,7 +70,6 @@ class OpenAIFiles
 			            VALUES ('".$project_id."', '".$folder_id."', '".$vsId."')";
             db_query($sql);
         }
-        die;
         return $vsId;
     }
 }
