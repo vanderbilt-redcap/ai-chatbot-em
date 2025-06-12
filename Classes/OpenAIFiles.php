@@ -28,7 +28,7 @@ class OpenAIFiles
                 $fileAttr = \Files::getEdocContentsAttributes($docId);
 
                 $curlFile = new \CURLStringFile($fileAttr[2], $fileAttr[1], $fileAttr[0]);
-                echo "after CURLStringFile"; die;
+
                 $headers = [
                     'Content-Type: multipart/form-data',
                     'Authorization: Bearer ' . $api_key,
@@ -38,7 +38,9 @@ class OpenAIFiles
                     'purpose' => 'assistants',
                     'file' => $curlFile,
                 ];
+                echo "before api call"; die;
                 $resFileUpload = Api::curlAPIPost($api_key, $endpoint . "files?api-version=" . $api_version, $data, $headers);
+                echo "after CURLStringFile"; die;
                 echo json_encode($resFileUpload); die;
                 $fileIds[] = $resFileUpload['id'];
             }
