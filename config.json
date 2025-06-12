@@ -1,0 +1,51 @@
+{
+    "name": "REDCap RAG AI Chatbot",
+    "namespace": "Vanderbilt\\REDCapAIChatbotModule",
+    "description": "Prototype module for REDCap-RAG (Retrieval Augmented Generation) AI Integration. Currently working towards using OpenAI to allow users to integrate external knowledge bases (i.e. Files inside REDCap folders) during the response generation process.",
+    "documentation": "README.md",
+    "permissions": [
+        "redcap_every_page_top"
+    ],
+    "enable-every-page-hooks-on-system-pages": true,
+    "authors": [
+        {
+            "name": "Vaishali Jagtap",
+            "email": "vaishali.jagtap@vumc.org",
+            "institution": "Vanderbilt University Medical Center"
+        }
+    ],
+    "project-settings": [
+        {
+            "key": "folder-id",
+            "name": "REDCap Folder (external source) to utilize to generate response",
+            "type": "folder-list"
+        },
+        {
+            "key": "api-key",
+            "name": "OpenAI API Key",
+            "type": "text"
+        },
+        {
+            "key": "endpoint",
+            "name": "OpenAI Endpoint URL",
+            "type": "text"
+        },
+        {
+            "key": "api-version",
+            "name": "API Model Version<br>(Example models for Azure-hosted OpenAI: 2024-02-01, 2024-08-01-preview.)",
+            "type": "text"
+        },
+        {
+            "key": "request-suffix",
+            "name": "Enter Suffix<br>Default text which will be added as suffix to user entered request/prompt text",
+            "default": "Answer the question based on the uploaded files only. If not able to get answer from uploaded files, print \"there is no information available regarding this question.\"",
+            "type": "textarea"
+        }
+    ],
+    "compatibility": {
+        "php-version-min": "5.6.0",
+        "php-version-max": "",
+        "redcap-version-min": "8.1.0",
+        "redcap-version-max": ""
+     }
+}

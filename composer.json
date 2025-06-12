@@ -1,0 +1,12 @@
+{
+    "name": "vanderbilt/aichatbot",
+    "description": "REDCap AI Chatbot.",
+    "type": "project",
+    "authors": [],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "RCConnect\\": "RCConnect/Db"
+        }
+    }
+}
