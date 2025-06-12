@@ -38,9 +38,8 @@ class OpenAIFiles
                     'purpose' => 'assistants',
                     'file' => $curlFile,
                 ];
-                echo "before api call"; die;
                 $resFileUpload = Api::curlAPIPost($api_key, $endpoint . "files?api-version=" . $api_version, $data, $headers);
-                echo "after CURLStringFile"; die;
+                echo "after api call"; die;
                 echo json_encode($resFileUpload); die;
                 $fileIds[] = $resFileUpload['id'];
             }
