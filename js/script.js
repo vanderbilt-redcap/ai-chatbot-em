@@ -75,6 +75,7 @@ $( document ).ready(function() {
     });
     $("button.save").click(function() {
         var moduleDirectoryPrefix = $('#external-modules-configure-modal').data('module');
+        alert("here "+moduleDirectoryPrefix);
         if (moduleDirectoryPrefix == 'redcap_ai_chatbot') {
             setTimeout(function() {
                 $.ajax({
