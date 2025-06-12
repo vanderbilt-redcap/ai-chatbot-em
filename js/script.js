@@ -100,7 +100,7 @@ $( document ).ready(function() {
                     }
                 })
                 .fail(function(data) {
-
+                    alert("failed "+data);
                 })
                 .always(function(data) {
 
