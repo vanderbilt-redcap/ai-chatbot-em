@@ -14,6 +14,7 @@ class OpenAIFiles
         $vsId = $this->module->vectorStoreIdforfolder($folder_id, $project_id);
 
         if (is_null($vsId) || $vsId == '') {
+            print "inside if";
             $endpoint = $this->endpoint;
             $api_key = $this->api_key;
             $api_version = $this->api_version;
@@ -41,7 +42,6 @@ class OpenAIFiles
                 echo json_encode($resFileUpload);
                 $fileIds[] = $resFileUpload['id'];
             }
-            die;
 
             /*************** STEP 2: Create New Vector Store *****************************/
             $headers = [
@@ -73,7 +73,10 @@ class OpenAIFiles
             $sql = "INSERT INTO redcap_folders_vector_stores_items (project_id, folder_id, vs_id)
 			            VALUES ('".$project_id."', '".$folder_id."', '".$vsId."')";
             db_query($sql);
+        } else {
+            print "outside if".$vsId;
         }
+        die;
         return $vsId;
     }
 }
