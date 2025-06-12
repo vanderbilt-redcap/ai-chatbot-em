@@ -101,8 +101,9 @@ class Api
         $curl = curl_init();
 
         curl_setopt_array($curl, $curl_info);
-        echo "before curl exec"; die;
+
         $response = curl_exec($curl);
+        echo "after curl exec"; die;
 
         $info           = curl_getinfo($curl);
 
