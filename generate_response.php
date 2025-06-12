@@ -111,7 +111,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
         $output = ['status' => 1, 'message'  => $resText];
     }
 } else if (isset($_POST['action']) && $_POST['action'] == 'upload_to_vs') {
-    die("inside");
     $vsFilesObj = new OpenAIFiles($_POST['endpoint'], $_POST['api_key'], $_POST['api_version'], $module);
     $vsId = $vsFilesObj->uploadToVectorStore($_POST['folder_id'], $projectId);
     if (is_null($vsId))  $vsId = "";
