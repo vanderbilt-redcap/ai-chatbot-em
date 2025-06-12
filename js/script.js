@@ -75,8 +75,9 @@ $( document ).ready(function() {
     });
     $("button.save").click(function() {
         var moduleDirectoryPrefix = $('#external-modules-configure-modal').data('module');
-        alert("here "+moduleDirectoryPrefix);
+
         if (moduleDirectoryPrefix == 'redcap_ai_chatbot') {
+            alert("here "+get_response_url);
             setTimeout(function() {
                 $.ajax({
                     method: 'POST',
@@ -91,6 +92,7 @@ $( document ).ready(function() {
                     dataType: 'json'
                 })
                 .done(function(data) {
+                    alert("here");
                     if (data.status != 1) {
                         alert(data.error.message);
                     } else {
