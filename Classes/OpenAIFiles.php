@@ -12,8 +12,13 @@ class OpenAIFiles
     public function uploadToVectorStore($folder_id, $project_id)
     {
         $vsId = $this->module->vectorStoreIdforfolder($folder_id, $project_id);
-        print $vsId."--"; die;
         if (is_null($vsId)) {
+            die("nullval");
+        }
+        if ($vsId == '') {
+            die("blnlval");
+        }
+        if (is_null($vsId) || $vsId == "") {
             $endpoint = $this->endpoint;
             $api_key = $this->api_key;
             $api_version = $this->api_version;
