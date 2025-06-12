@@ -42,7 +42,6 @@ class Api
 
     public static function curlAPIPost($api_key, $url, $data, $headers = [])
     {
-        echo "inside api call function"; die;
         if (empty($headers)) {
             $headers = [
                 'Content-Type: application/json',
@@ -66,9 +65,10 @@ class Api
         $err = curl_error($ch);
         curl_close($ch);
         if($err) {
-            echo("cURL Error #:" . $err);
+            echo("cURL Error #:" . $err); die;
             return false;
         } else {
+            echo("success"); die;
             return $res;
         }
 
