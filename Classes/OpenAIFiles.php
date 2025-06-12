@@ -19,6 +19,7 @@ class OpenAIFiles
             $api_version = $this->api_version;
             /*************** STEP 1: Upload a Files from folder *****************************/
             $docIds = $this->module->docsForFolder($folder_id);
+            print json_encode($docIds); die;
             if (empty($docIds)) {
                 print "<b>No files available in this folder.</b>";
                 exit;
