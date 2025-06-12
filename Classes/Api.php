@@ -97,10 +97,11 @@ class Api
         if ($options == []) {
             unset($curl_info[CURLOPT_POSTFIELDS]);
         }
-        echo "before curl init"; die;
+
         $curl = curl_init();
 
         curl_setopt_array($curl, $curl_info);
+        echo "before curl exec"; die;
         $response = curl_exec($curl);
 
         $info           = curl_getinfo($curl);
