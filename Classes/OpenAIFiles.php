@@ -12,9 +12,9 @@ class OpenAIFiles
     public function uploadToVectorStore($folder_id, $project_id)
     {
         $vsId = $this->module->vectorStoreIdforfolder($folder_id, $project_id);
-echo "kdjf".$vsId; die;
+
         if (is_null($vsId) || $vsId == '') {
-            print "inside if";
+            print "inside if"; die;
             $endpoint = $this->endpoint;
             $api_key = $this->api_key;
             $api_version = $this->api_version;
