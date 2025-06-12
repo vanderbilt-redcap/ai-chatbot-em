@@ -77,7 +77,7 @@ class Api
     }
     public static function sendRequest($url, $method, $options = [], $headers)
     {
-
+echo $url; die;
         //$post_fields = json_encode($options);
         $post_fields = $options;
 
