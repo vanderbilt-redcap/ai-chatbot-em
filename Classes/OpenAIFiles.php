@@ -26,6 +26,7 @@ class OpenAIFiles
             }
             foreach ($docIds as $docId) {
                 $fileAttr = \Files::getEdocContentsAttributes($docId);
+                echo "after getedocs"; die;
                 $curlFile = new \CURLStringFile($fileAttr[2], $fileAttr[1], $fileAttr[0]);
                 $headers = [
                     'Content-Type: multipart/form-data',
