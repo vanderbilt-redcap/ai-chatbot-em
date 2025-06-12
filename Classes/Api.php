@@ -75,27 +75,22 @@ class Api
         }*/
 
     }
-    public static function sendRequest($url, $method, $options = [])
+    public static function sendRequest($url, $method, $options = [], $headers)
     {
         $post_fields = json_encode($options);
 
-        if (array_key_exists('file', $options) || array_key_exists('image', $options)) {
-            $this->headers[0] = $this->contentTypes["multipart/form-data"];
-            $post_fields      = $options;
-        } else {
-            $this->headers[0] = $this->contentTypes["application/json"];
-        }
+
         $curl_info = [
             CURLOPT_URL            => $url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING       => '',
             CURLOPT_MAXREDIRS      => 10,
-            CURLOPT_TIMEOUT        => $this->timeout,
+            //CURLOPT_TIMEOUT        => $this->timeout,
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST  => $method,
             CURLOPT_POSTFIELDS     => $post_fields,
-            CURLOPT_HTTPHEADER     => $this->headers,
+            CURLOPT_HTTPHEADER     => $headers,
         ];
 
         if ($options == []) {
@@ -108,7 +103,6 @@ class Api
         $response = curl_exec($curl);
 
         $info           = curl_getinfo($curl);
-        $this->curlInfo = $info;
 
         curl_close($curl);
 
