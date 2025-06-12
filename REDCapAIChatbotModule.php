@@ -63,11 +63,8 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
                 FROM redcap_folders_vector_stores_items WHERE project_id = '" . db_escape($project_id) . "'
                 AND folder_id = '" . db_escape($folder_id) . "'
 			    ORDER BY folder_id";
-        echo $sql; die;
         $result = $this->query($sql);
-        foreach ($result as $r) {
-            $vsId = $r['vs_id'];
-        }
+        $vsId = $result->fetch_assoc()['vs_id'];
 
         return $vsId;
     }
