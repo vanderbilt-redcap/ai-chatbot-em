@@ -77,8 +77,8 @@ class Api
     }
     public static function sendRequest($url, $method, $options = [], $headers)
     {
-        $post_fields = json_encode($options);
-
+        //$post_fields = json_encode($options);
+        $post_fields = $options;
 
         $curl_info = [
             CURLOPT_URL            => $url,
