@@ -11,6 +11,7 @@ class OpenAIFiles
     }
     public function uploadToVectorStore($folder_id, $project_id)
     {
+        die("in a functikon");
         $vsId = $this->module->vectorStoreIdforfolder($folder_id, $project_id);
 
         if (is_null($vsId) || $vsId == '') {
