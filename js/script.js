@@ -66,7 +66,7 @@ $( document ).ready(function() {
             cache: false,
             url: get_response_url+'&action=sync_to_vs',
             success: function (data) {
-                //alert(data);
+                alert(data);
             },
             error:function (xhr, ajaxOptions, thrownError){
 
@@ -92,13 +92,13 @@ $( document ).ready(function() {
                 })
                 .done(function(data) {
                     if (data.status != 1) {
-                        alert(data.error.message);
+                        //alert(data.error.message);
                     } else {
-                        alert(data.message);
+                        //alert(data.message);
                     }
                 })
                 .fail(function(data) {
-                    alert("fail"+JSON.stringify(data));
+                    //alert("fail"+JSON.stringify(data));
                 })
                 .always(function(data) {
 

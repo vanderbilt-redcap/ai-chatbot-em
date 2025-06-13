@@ -35,7 +35,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
                 $resFileUpload = Api::curlAPIPost($api_key, $endpoint . "files?api-version=" . $api_version, $data, $headers);
                 $fileIds[] = $resFileUpload['id'];
             }
-
             /*************** STEP 2: Create New Vector Store *****************************/
             $headers = [
                 'Content-Type: application/json',
@@ -63,19 +62,24 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
             $vsfbId = $resVF['id'];
 
             // Insert vector store ID and folder ID in mapping DB table
-            $sql = "INSERT INTO redcap_folders_vector_stores_items (project_id, folder_id, vs_id)
-			            VALUES ('".$projectId."', '".$folderId."', '".$vsId."')";
+            $sql = "INSERT INTO redcap_folders_vector_stores_items (project_id, folder_id, vs_id, created_at)
+			            VALUES ('".$projectId."', '".$folderId."', '".$vsId."', ".NOW.")";
             db_query($sql);
         }
 
         /*************** STEP 4: Responses API *****************************/
 
-        $suffix = ($module->getProjectSetting('request-suffix') != '')
-                        ? $module->getProjectSetting('request-suffix')
-                        : 'Answer the question based on the uploaded files only';
-        //If not able to get answer from uploaded files, print "there is no information available regarding this question."
-        $prompt = $_POST['prompt_text'].' '.$suffix;
-        $prompt .= " Limit your response to what is asked. Do not add any additional content, such as introductory remarks, explanations, etc.!";
+        $prependText = $module->getProjectSetting('request-prepend-text') ?: "Refer to the uploaded files and provide a response that strictly adheres to its content.";
+
+        /*$prompt = $prependText
+            ."<br>Limit your response to what is asked. Do not add any additional content, such as introductory remarks, explanations, etc.!"
+            ."<br>Answer the question below:<br>"
+            .$_POST['prompt_text'];*/
+
+        $prompt = $prependText
+            ."<br>Answer the question below:<br>"
+            .$_POST['prompt_text'];
+        //echo $prompt; die;
         $headers = [
             'Content-Type: application/json',
             'Authorization: Bearer ' . $api_key,
@@ -90,7 +94,8 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
                     "max_num_results" => 20
                 ]
             ],
-            'input' => $prompt
+            'input' => $prompt,
+            'temperature' => 1.5
         ];
 
         $data_json = json_encode($data, JSON_UNESCAPED_SLASHES);
@@ -102,9 +107,18 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
                     foreach ($output['content'] as $content) {
                         if (isset($content['text'])) {
                             $resText = $content['text'];
+                            $annotation_arr = $content['annotations'];
                         }
                     }
                 }
+            }
+        }
+
+        if ($module->getProjectSetting('use-files-data') == true && empty($annotation_arr)) {
+            if ($module->getProjectSetting('custom-message') != '') {
+                $resText = $module->getProjectSetting('custom-message');
+            } else {
+                $resText = "Sorry, We are unable to provide any information based on this question.";
             }
         }
         $output = ['status' => 1, 'message'  => $resText];
@@ -138,15 +152,13 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
             ];
 
             $headers = [
-                'Content-Type: application/json',
+                'Content-Type: multipart/form-data',
                 'Authorization: Bearer ' . $api_key,
-                'OpenAI-Beta: assistants=v1',
             ];
 
             $resFileUpload = Api::curlAPIPost($api_key, $endpoint . "files?api-version=" . $api_version, $data, $headers);
             $fileIds[] = $resFileUpload['id'];
         }
-
         /*************** STEP 2: Create New Vector Store *****************************/
         $headers = [
             'Content-Type: application/json',
@@ -174,8 +186,8 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
         $vsfbId = $resVF['id'];
 
         // Insert vector store ID and folder ID in mapping DB table
-        $sql = "INSERT INTO redcap_folders_vector_stores_items (project_id, folder_id, vs_id)
-			            VALUES ('".$projectId."', '".$folder_id."', '".$vsId."')";
+        $sql = "INSERT INTO redcap_folders_vector_stores_items (project_id, folder_id, vs_id, created_at)
+			            VALUES ('".$projectId."', '".$folder_id."', '".$vsId."', ".NOW.")";
         db_query($sql);
     }
     if (is_null($vsId))  $vsId = "";

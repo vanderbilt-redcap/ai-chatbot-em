@@ -49,8 +49,8 @@ class Api
                 'OpenAI-Beta: assistants=v1',
             ];
         }
-        $response = self::http_post_em($url, $data, null, 'application/json', "", $headers);
-            // self::sendRequest($url, 'POST', $data, $headers);
+        //$response = self::http_post_em($url, $data, null, 'application/json', "", $headers);
+        $response = self::sendRequest($url, 'POST', $data, $headers);
         return json_decode($response, true);
     }
     public static function http_post_em($url="", $params=array(), $timeout=null, $content_type='application/x-www-form-urlencoded', $basic_auth_user_pass="", $headers=array())
