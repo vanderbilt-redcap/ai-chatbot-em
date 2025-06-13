@@ -191,6 +191,18 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
     if ($vsFilesCount != $storedFilesCount
         || $anyDateLater == true) { // At least one date in the array of docs created dates is later than the vector store created date.
 
+        // Delete all files inside this vector store
+        $response = \Api::getCurlCall($api_key, $endpoint. "vector_stores/".$storedVSId."/files?api-version=".$api_version);
+        $allFiles = json_decode($response);
+        if (count($allFiles->data) > 0) {
+            $headers = ["Authorization: Bearer $api_key"];
+            foreach ($allFiles->data as $fileObj) {
+                $resFile = \Api::deleteCurlCall($api_key, $endpoint. "files/".$fileObj->id."?api-version=".$api_version, $headers);
+            }
+        }
+        // Now delete Vector Store
+        $resDelVs = \Api::deleteCurlCall($api_key, $endpoint. "vector_stores/".$storedVSId."?api-version=".$api_version);
+
         // Delete existing entry of vector store ID and folder ID in mapping DB table
         $sql = "DELETE FROM redcap_folders_vector_stores_items 
                 WHERE project_id = '".$projectId."' AND folder_id = '".$folderId."' AND vs_id = '".$storedVSId."'";

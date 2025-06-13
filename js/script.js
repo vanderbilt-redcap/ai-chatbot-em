@@ -11,20 +11,22 @@ let userMessage = null; // Variable to store user's message
 const inputInitHeight = chatInput.prop('scrollHeight');
 
 $( document ).ready(function() {
+    // If clicked anywhere on page, close files listing box
     $(document).mouseup(function(e) {
         if (!dropdownMenu.is(e.target) && dropdownMenu.has(e.target).length === 0) {
             dropdownMenu.css("display", "none");
         }
     });
 
+    // Clicked on files listing icon on header of chat window
     menuIcon.click(function (){
-        console.log(dropdownMenu.css("display"));
         if (dropdownMenu.css("display") == 'block') {
             dropdownMenu.css("display", "none");
         } else {
             dropdownMenu.css("display", "block");
             var fetchText = '<div style="margin: 10px;"><img alt="Fetching from Vector Store..." src="' + app_path_images + 'progress_circle.gif">&nbsp; Fetching, Please wait...</div>';
             $(".chatbot .dropdown-menu").html(fetchText);
+            // Get list of filenames from Vector Store
             $.ajax({
                 cache: false,
                 url: get_response_url+'&action=get_files_info',
@@ -39,6 +41,7 @@ $( document ).ready(function() {
 
     });
 
+    // Clicked on "Send" icon on bottom of chat window near question
     sendChatBtn.click(function (){
         handleChat();
     });
