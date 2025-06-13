@@ -83,8 +83,9 @@ $( document ).ready(function() {
             $("#send-btn").css("color", "#888");
         }
         // Adjust the height of the input textarea based on its content
+        var element = chatInput[0]; // or $('#myElement').get(0);
         chatInput.height("${inputInitHeight}px");
-        //chatInput.height(`${chatInput.scrollHeight}px`);
+        chatInput.height("${element.scrollHeight}px");
     });
 
     $(".chatbot span.sync-icon").click(function() {
