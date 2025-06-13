@@ -142,10 +142,10 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
                 'Authorization: Bearer ' . $api_key,
                 'OpenAI-Beta: assistants=v1',
             ];
-            $resFile = http_post($endpoint . "files?api-version=" . $api_version, $data, null, 'application/json', "", $headers);
-            echo "after call http post"; die;
-            //Api::curlAPIPost($api_key, $endpoint . "files?api-version=" . $api_version, $data, $headers);
-            $resFileUpload = json_decode($resFile, true);
+            //$resFile = API::http_post_em($endpoint . "files?api-version=" . $api_version, $data, null, 'application/json', "", $headers);
+            //echo "after call http post"; die;
+            $resFileUpload = Api::curlAPIPost($api_key, $endpoint . "files?api-version=" . $api_version, $data, $headers);
+            //$resFileUpload = json_decode($resFile, true);
             $fileIds[] = $resFileUpload['id'];
         }
 
