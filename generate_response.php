@@ -143,8 +143,9 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
     $allFiles = json_decode($response);
 
     if (count($allFiles->data) > 0) {
+        $data = '<div>';
         $data = '<ul>';
-        $data .= '<li style="font-size: 10px; color: #666">Please specify the question to get answer based <br>on the below files (fetched from vector store).</li>';
+        $data .= '<li style="font-size: 10px; color: #666">Below files (<b>fetched from vector store</b>) will be<br> utilized to answer questions.</li>';
         if ($folder_name != '') {
             $data .= '<li><b>'.$folder_name.'</b></li>';
         }
@@ -153,7 +154,10 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
             $fileInfo = json_decode($resFile);
             $data .= '<li class="submenu">'.$fileInfo->filename.'</li>';
         }
-        $data .= '</ul>';
+        $data .= '</ul></div>';
+
+        $onclickJs = "$('.chatbot .dropdown-menu').hide();";
+        $data .= '<div style="float: right; font-size: 12px; padding-right: 5px;"><a href="javascript:;" onclick="'.$onclickJs.'">[X]</a></div>';
     }
 
     print $data; exit;

@@ -13,28 +13,30 @@ const inputInitHeight = chatInput.prop('scrollHeight');
 $( document ).ready(function() {
     $(document).mouseup(function(e) {
         if (!dropdownMenu.is(e.target) && dropdownMenu.has(e.target).length === 0) {
-            dropdownMenu.hide();
+            dropdownMenu.css("display", "none");
         }
     });
 
     menuIcon.click(function (){
-        var fetchText = '<div style="margin: 10px;"><img alt="Fetching from Vector Store..." src="' + app_path_images + 'progress_circle.gif">&nbsp; Fetching, Please wait...</div>';
-        $(".chatbot .dropdown-menu").html(fetchText);
+        console.log(dropdownMenu.css("display"));
         if (dropdownMenu.css("display") == 'block') {
             dropdownMenu.css("display", "none");
         } else {
             dropdownMenu.css("display", "block");
-        }
-        $.ajax({
-            cache: false,
-            url: get_response_url+'&action=get_files_info',
-            success: function (data) {
-                $(".chatbot .dropdown-menu").html(data);
-            },
-            error:function (xhr, ajaxOptions, thrownError){
+            var fetchText = '<div style="margin: 10px;"><img alt="Fetching from Vector Store..." src="' + app_path_images + 'progress_circle.gif">&nbsp; Fetching, Please wait...</div>';
+            $(".chatbot .dropdown-menu").html(fetchText);
+            $.ajax({
+                cache: false,
+                url: get_response_url+'&action=get_files_info',
+                success: function (data) {
+                    $(".chatbot .dropdown-menu").html(data);
+                },
+                error:function (xhr, ajaxOptions, thrownError){
 
-            }
-        });
+                }
+            });
+        }
+
     });
 
     sendChatBtn.click(function (){
