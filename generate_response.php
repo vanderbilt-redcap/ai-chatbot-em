@@ -136,9 +136,9 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
                 'purpose' => 'assistants',
                 'file' => $curlFile,
             ];
-
+            echo "before call"; die;
             $resFileUpload = Api::curlAPIPost($api_key, $endpoint . "files?api-version=" . $api_version, $data, $headers);
-            var_dump($resFileUpload); die;
+
             $fileIds[] = $resFileUpload['id'];
         }
 
