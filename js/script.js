@@ -66,7 +66,7 @@ $( document ).ready(function() {
             cache: false,
             url: get_response_url+'&action=sync_to_vs',
             success: function (data) {
-                alert(data);
+                //alert(data);
             },
             error:function (xhr, ajaxOptions, thrownError){
 
@@ -91,7 +91,6 @@ $( document ).ready(function() {
                     dataType: 'json'
                 })
                 .done(function(data) {
-                    //alert("here");
                     if (data.status != 1) {
                         //alert(data.error.message);
                     } else {
