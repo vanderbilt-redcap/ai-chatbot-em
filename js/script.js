@@ -11,12 +11,31 @@ let userMessage = null; // Variable to store user's message
 const inputInitHeight = chatInput.prop('scrollHeight');
 
 $( document ).ready(function() {
+
+    /*$(document).click(function(event) {
+        if (!$(event.target).hasClass('dropdown-menu') && $(event.target).parents('.dropdown-menu').length == 0) {
+            dropdownMenu.css("display", "none");
+        }
+    });*/
+
     menuIcon.click(function (){
+        var fetchText = '<div style="margin: 10px;"><img alt="Fetching from Vector Store..." src="' + app_path_images + 'progress_circle.gif">&nbsp; Fetching, Please wait...</div>';
+        $(".chatbot .dropdown-menu").html(fetchText);
         if (dropdownMenu.css("display") == 'block') {
             dropdownMenu.css("display", "none");
         } else {
             dropdownMenu.css("display", "block");
         }
+        $.ajax({
+            cache: false,
+            url: get_response_url+'&action=get_files_info',
+            success: function (data) {
+                $(".chatbot .dropdown-menu").html(data);
+            },
+            error:function (xhr, ajaxOptions, thrownError){
+
+            }
+        });
     });
 
     sendChatBtn.click(function (){
@@ -29,16 +48,6 @@ $( document ).ready(function() {
 
     chatbotToggler.click(function () {
         document.body.classList.toggle("show-chatbot");
-        $.ajax({
-            cache: false,
-            url: get_response_url+'&action=get_files_info',
-            success: function (data) {
-                $(".chatbot .dropdown-menu").html(data);
-            },
-            error:function (xhr, ajaxOptions, thrownError){
-
-            }
-        });
     });
 
     chatInput.on( "keydown", function(e) {
@@ -62,11 +71,15 @@ $( document ).ready(function() {
     });
 
     $(".chatbot span.sync-icon").click(function() {
+        showProgress(1,0,"Sync in progress... Please wait");
         $.ajax({
             cache: false,
             url: get_response_url+'&action=sync_to_vs',
             success: function (data) {
-                alert(data);
+                showProgress(0,0);
+                if (data == 1) {
+                    alert("Files from selected folder synced successfully.");
+                }
             },
             error:function (xhr, ajaxOptions, thrownError){
 
@@ -92,13 +105,13 @@ $( document ).ready(function() {
                 })
                 .done(function(data) {
                     if (data.status != 1) {
-                        alert(data.error.message);
+                        //alert(data.error.message);
                     } else {
-                        alert(data.message);
+                        //alert(data.message);
                     }
                 })
                 .fail(function(data) {
-                    alert("fail"+JSON.stringify(data));
+                    //alert("fail"+JSON.stringify(data));
                 })
                 .always(function(data) {
 

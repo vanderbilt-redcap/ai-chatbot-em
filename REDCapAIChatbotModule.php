@@ -78,12 +78,17 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
      * @return array|int
      * @see /redcap_vX.X.X/Design/online_designer.php
      */
-    public function docsForFolder($folder_id)
+    public function docsForFolder($folder_id, $project_id)
     {
         $docIds = [];
-        $sql = "SELECT de.doc_id FROM redcap_docs_folders_files f, redcap_docs_to_edocs de
-                where f.folder_id = $folder_id and de.docs_id = f.docs_id";
 
+        $sql = "select de.doc_id
+                from redcap_docs_to_edocs de, redcap_edocs_metadata e, redcap_docs d
+                left join redcap_docs_attachments a on a.docs_id = d.docs_id
+                left join redcap_docs_folders_files ff on ff.docs_id = d.docs_id
+                left join redcap_docs_folders f on ff.folder_id = f.folder_id
+                where d.project_id = $project_id and f.folder_id = $folder_id and d.export_file = 0 and a.docs_id is null
+                and de.docs_id = d.docs_id and de.doc_id = e.doc_id and e.delete_date is null and e.date_deleted_server is null";
         $result = $this->query($sql);
 
         $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -109,7 +114,7 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
                             left join redcap_docs_folders_files ff on ff.docs_id = d.docs_id
                             left join redcap_docs_folders f on ff.folder_id = f.folder_id
                             where d.project_id = $project_id and f.folder_id = $folder_id and d.export_file = 0 and a.docs_id is null
-                            and de.docs_id = d.docs_id and de.doc_id = e.doc_id and e.date_deleted_server is null";
+                            and de.docs_id = d.docs_id and de.doc_id = e.doc_id and e.delete_date is null and e.date_deleted_server is null";
 
         $result = $this->query($sql);
 
@@ -139,16 +144,31 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
                 left join redcap_docs_folders_files ff on ff.docs_id = d.docs_id
                 left join redcap_docs_folders f on ff.folder_id = f.folder_id
                 where d.project_id = $project_id and f.folder_id = $folder_id and d.export_file = 0 and a.docs_id is null
-                and de.docs_id = d.docs_id and de.doc_id = e.doc_id and e.date_deleted_server is null";
+                and de.docs_id = d.docs_id and de.doc_id = e.doc_id and e.delete_date is null and e.date_deleted_server is null";
 
         $result = $this->query($sql);
 
         $docsList = [];
         foreach ($result as $i => $arr) {
             $doc_id = $arr['docs_id'];
-            $stored_data = $arr['stored_date'];
-            $docsList[$doc_id]['stored_date'] = $stored_data;
+            $stored_date = $arr['stored_date'];
+            $docsList[$doc_id]['stored_date'] = $stored_date;
         }
         return $docsList;
+    }
+
+    public function getFilesListStoredAtVectorStore($api_key, $endpoint) {
+        $response = \Api::getCurlCall($api_key, $endpoint);
+        $allFiles = json_decode($response);
+        return $allFiles;
+    }
+
+    public function getFolderName($folder_id, $project_id)
+    {
+        if (!isinteger($folder_id)) return null;
+        // Get the name of this folder and return HTML link and div
+        $sql = "select name from redcap_docs_folders where folder_id = $folder_id and project_id = ".$project_id;
+        $q = db_query($sql);
+        return (db_num_rows($q) ? db_result($q, 0, "name") : null);
     }
 }

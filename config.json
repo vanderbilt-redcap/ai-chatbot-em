@@ -37,7 +37,7 @@
         },
         {
             "key": "request-prepend-text",
-            "name": "Text to prepend to a question (Optional). <br/> (Example: \"Summarize the response in 150 words or less.\")",
+            "name": "Text to prepend to a question (Optional). <br/> (Example: \"Reformulate the response as a single paragraph.\")",
             "default": "",
             "type": "textarea"
         },

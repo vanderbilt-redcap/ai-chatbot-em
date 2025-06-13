@@ -76,7 +76,7 @@ if (!empty($_POST['upload-files'])) {
     $vsId = $module->vectorStoreIdforfolder($folderId, $projectId);
     if (is_null($vsId)) {
         /*************** STEP 1: Upload a Files from folder *****************************/
-        $docIds = $module->docsForFolder($folderId);
+        $docIds = $module->docsForFolder($folderId, $projectId);
         if (empty($docIds)) {
             print "<b>No files available in this folder.</b>";
             exit;
