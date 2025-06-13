@@ -92,13 +92,13 @@ $( document ).ready(function() {
                 })
                 .done(function(data) {
                     if (data.status != 1) {
-                        //alert(data.error.message);
+                        alert(data.error.message);
                     } else {
-                        //alert(data.message);
+                        alert(data.message);
                     }
                 })
                 .fail(function(data) {
-                    //alert("fail"+JSON.stringify(data));
+                    alert("fail"+JSON.stringify(data));
                 })
                 .always(function(data) {
 

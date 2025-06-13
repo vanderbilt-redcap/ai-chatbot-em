@@ -63,7 +63,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
 
             // Insert vector store ID and folder ID in mapping DB table
             $sql = "INSERT INTO redcap_folders_vector_stores_items (project_id, folder_id, vs_id, created_at)
-			            VALUES ('".$projectId."', '".$folderId."', '".$vsId."', ".NOW.")";
+			            VALUES ('".$projectId."', '".$folderId."', '".$vsId."', '".NOW."')";
             db_query($sql);
         }
 
@@ -187,7 +187,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
 
         // Insert vector store ID and folder ID in mapping DB table
         $sql = "INSERT INTO redcap_folders_vector_stores_items (project_id, folder_id, vs_id, created_at)
-			            VALUES ('".$projectId."', '".$folder_id."', '".$vsId."', ".NOW.")";
+			            VALUES ('".$projectId."', '".$folder_id."', '".$vsId."', '".NOW."')";
         db_query($sql);
     }
     if (is_null($vsId))  $vsId = "";
@@ -211,6 +211,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
     $docsList = $module->listAllFilesDetails($module->getProjectSetting('folder-id'), $projectId);
     if (!empty($docsList)) {
         foreach ($docsList as $docId => $docList) {
+
             print "doc id".$docId."--Stored date".$docList['stored_date'];
         }
     }

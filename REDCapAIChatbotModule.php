@@ -57,16 +57,17 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
      * @see /redcap_vX.X.X/Design/online_designer.php
      * 
      */
-    public function vectorStoreIdforfolder($folder_id, $project_id)
+    public function vectorStoreIdforfolder($folder_id, $project_id, $returnCreatedTime = false)
     {
-        $sql = "SELECT vs_id
+        $field = ($returnCreatedTime == true) ? 'created_at' : 'vs_id';
+        $sql = "SELECT ".$field."
                 FROM redcap_folders_vector_stores_items WHERE project_id = '" . db_escape($project_id) . "'
                 AND folder_id = '" . db_escape($folder_id) . "'
 			    ORDER BY folder_id";
         $result = $this->query($sql);
-        $vsId = $result->fetch_assoc()['vs_id'];
+        $return_val = $result->fetch_assoc()[$field];
 
-        return $vsId;
+        return $return_val;
     }
 
     /**

@@ -126,7 +126,7 @@ if (!empty($_POST['upload-files'])) {
 
         // Insert vector store ID and folder ID in mapping DB table
         $sql = "INSERT INTO redcap_folders_vector_stores_items (project_id, folder_id, vs_id, created_at)
-			            VALUES ('".$projectId."', '".$folderId."', '".$vsId."', ".NOW.")";
+			            VALUES ('".$projectId."', '".$folderId."', '".$vsId."', '".NOW."')";
         db_query($sql);
     }
 
