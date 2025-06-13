@@ -46,7 +46,20 @@ $( document ).ready(function() {
     });
 
     chatbotToggler.click(function () {
-        document.body.classList.toggle("show-chatbot");
+        $.ajax({
+            cache: false,
+            url: get_response_url+'&action=validate_em_setup',
+            success: function (data) {
+                if (data == 1) {
+                    document.body.classList.toggle("show-chatbot");
+                } else {
+                    alert("Error: Module is not configured. Please complete set up.");
+                }
+            },
+            error:function (xhr, ajaxOptions, thrownError){
+
+            }
+        });
     });
 
     chatInput.on( "keydown", function(e) {

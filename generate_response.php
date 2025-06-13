@@ -193,8 +193,16 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
         db_query($sql);
         $vsId = uploadFilesToVectorStore($module, $folderId, $projectId, $endpoint, $api_key, $api_version);
     }
-    print "1";
-    exit;
+    print "1"; exit;
+} else if (isset($_GET['action']) && $_GET['action'] == 'validate_em_setup') {
+    $response = 1;
+    if (trim($folderId) == ''
+        || trim($api_key) == ''
+        || trim($endpoint) == ''
+        || trim($api_version) == '') {
+        $response = 0;
+    }
+    print $response; exit;
 }
 function uploadFilesToVectorStore($module, $folder_id, $projectId, $endpoint, $api_key, $api_version) {
 
