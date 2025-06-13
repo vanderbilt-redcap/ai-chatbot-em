@@ -98,7 +98,7 @@ $( document ).ready(function() {
                     }
                 })
                 .fail(function(data) {
-                    alert("fail"+data);
+                    alert("fail"+JSON.stringify(data));
                 })
                 .always(function(data) {
 
