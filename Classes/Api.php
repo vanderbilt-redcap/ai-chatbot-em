@@ -49,37 +49,11 @@ class Api
                 'OpenAI-Beta: assistants=v1',
             ];
         }
-        return self::sendRequest($url, 'POST', $data, $headers);
-
-
-
-        /*$ch = curl_init($url);
-
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-
-        $response = curl_exec($ch);
-        echo "before exec"; die;
-        $res = json_decode($response, true);
-        $err = curl_error($ch);
-        curl_close($ch);
-        if($err) {
-            echo("cURL Error #:" . $err); die;
-            return false;
-        } else {
-            echo("success"); die;
-            return $res;
-        }*/
-
+        $response = self::sendRequest($url, 'POST', $data, $headers);
+        return json_decode($response, true);
     }
-    public static function sendRequest($url, $method, $options = [], $headers)
+    public static function sendRequest($url, $method, $post_fields = [], $headers)
     {
-        //$post_fields = json_encode($options);
-        $post_fields = $options;
-
         $curl_info = [
             CURLOPT_URL            => $url,
             CURLOPT_RETURNTRANSFER => true,
@@ -92,19 +66,18 @@ class Api
             CURLOPT_HTTPHEADER     => $headers,
         ];
 
-        if ($options == []) {
+        if ($post_fields == []) {
             unset($curl_info[CURLOPT_POSTFIELDS]);
         }
 
         $curl = curl_init();
 
         curl_setopt_array($curl, $curl_info);
-        echo "before curl exec";
-        echo json_encode($curl_info); die;
+        /*echo "before curl exec";
+        echo json_encode($curl_info); */
 
         $response = curl_exec($curl);
-
-        $info           = curl_getinfo($curl);
+        $info = curl_getinfo($curl);
 
         curl_close($curl);
 
