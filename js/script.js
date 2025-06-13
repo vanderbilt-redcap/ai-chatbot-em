@@ -11,12 +11,11 @@ let userMessage = null; // Variable to store user's message
 const inputInitHeight = chatInput.prop('scrollHeight');
 
 $( document ).ready(function() {
-
-    /*$(document).click(function(event) {
-        if (!$(event.target).hasClass('dropdown-menu') && $(event.target).parents('.dropdown-menu').length == 0) {
-            dropdownMenu.css("display", "none");
+    $(document).mouseup(function(e) {
+        if (!dropdownMenu.is(e.target) && dropdownMenu.has(e.target).length === 0) {
+            dropdownMenu.hide();
         }
-    });*/
+    });
 
     menuIcon.click(function (){
         var fetchText = '<div style="margin: 10px;"><img alt="Fetching from Vector Store..." src="' + app_path_images + 'progress_circle.gif">&nbsp; Fetching, Please wait...</div>';
@@ -71,14 +70,15 @@ $( document ).ready(function() {
     });
 
     $(".chatbot span.sync-icon").click(function() {
-        showProgress(1,0,"Sync in progress... Please wait");
+        $(".status-msg").html('<img alt="Processing..." src="' + app_path_images + 'progress_circle.gif">&nbsp; Syncing, Please wait...');
         $.ajax({
             cache: false,
             url: get_response_url+'&action=sync_to_vs',
             success: function (data) {
                 showProgress(0,0);
                 if (data == 1) {
-                    alert("Files from selected folder synced successfully.");
+                    $(".status-msg").html('<i class="fas fa-check"></i> Completed!');
+                    $(".status-msg").show().delay( 2000 ).hide(0);
                 }
             },
             error:function (xhr, ajaxOptions, thrownError){
