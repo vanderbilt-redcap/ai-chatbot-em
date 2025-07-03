@@ -11,14 +11,37 @@ let userMessage = null; // Variable to store user's message
 const inputInitHeight = chatInput.prop('scrollHeight');
 
 $( document ).ready(function() {
+    // If clicked anywhere on page, close files listing box
+    $(document).mouseup(function(e) {
+        if (!dropdownMenu.is(e.target) && dropdownMenu.has(e.target).length === 0) {
+            dropdownMenu.css("display", "none");
+        }
+    });
+
+    // Clicked on files listing icon on header of chat window
     menuIcon.click(function (){
         if (dropdownMenu.css("display") == 'block') {
             dropdownMenu.css("display", "none");
         } else {
             dropdownMenu.css("display", "block");
+            var fetchText = '<div style="margin: 10px;"><img alt="Fetching from Vector Store..." src="' + app_path_images + 'progress_circle.gif">&nbsp; Fetching, Please wait...</div>';
+            $(".chatbot .dropdown-menu").html(fetchText);
+            // Get list of filenames from Vector Store
+            $.ajax({
+                cache: false,
+                url: get_response_url+'&action=get_files_info',
+                success: function (data) {
+                    $(".chatbot .dropdown-menu").html(data);
+                },
+                error:function (xhr, ajaxOptions, thrownError){
+
+                }
+            });
         }
+
     });
 
+    // Clicked on "Send" icon on bottom of chat window near question
     sendChatBtn.click(function (){
         handleChat();
     });
@@ -28,12 +51,15 @@ $( document ).ready(function() {
     });
 
     chatbotToggler.click(function () {
-        document.body.classList.toggle("show-chatbot");
         $.ajax({
             cache: false,
-            url: get_response_url+'&action=get_files_info',
+            url: get_response_url+'&action=validate_em_setup',
             success: function (data) {
-                $(".chatbot .dropdown-menu").html(data);
+                if (data == 1) {
+                    document.body.classList.toggle("show-chatbot");
+                } else {
+                    alert("Error: Module is not configured. Please complete set up.");
+                }
             },
             error:function (xhr, ajaxOptions, thrownError){
 
@@ -57,16 +83,22 @@ $( document ).ready(function() {
             $("#send-btn").css("color", "#888");
         }
         // Adjust the height of the input textarea based on its content
+        var element = chatInput[0]; // or $('#myElement').get(0);
         chatInput.height("${inputInitHeight}px");
-        //chatInput.height(`${chatInput.scrollHeight}px`);
+        chatInput.height("${element.scrollHeight}px");
     });
 
     $(".chatbot span.sync-icon").click(function() {
+        $(".status-msg").html('<img alt="Processing..." src="' + app_path_images + 'progress_circle.gif">&nbsp; Syncing, Please wait...');
         $.ajax({
             cache: false,
             url: get_response_url+'&action=sync_to_vs',
             success: function (data) {
-                alert(data);
+                showProgress(0,0);
+                if (data == 1) {
+                    $(".status-msg").html('<i class="fas fa-check"></i> Completed!');
+                    $(".status-msg").show().delay( 2000 ).hide(0);
+                }
             },
             error:function (xhr, ajaxOptions, thrownError){
 
@@ -75,6 +107,7 @@ $( document ).ready(function() {
     });
     $("button.save").click(function() {
         var moduleDirectoryPrefix = $('#external-modules-configure-modal').data('module');
+
         if (moduleDirectoryPrefix == 'redcap_ai_chatbot') {
             setTimeout(function() {
                 $.ajax({
@@ -91,13 +124,13 @@ $( document ).ready(function() {
                 })
                 .done(function(data) {
                     if (data.status != 1) {
-                        alert(data.error.message);
+                        //alert(data.error.message);
                     } else {
-                        alert(data.message);
+                        //alert(data.message);
                     }
                 })
                 .fail(function(data) {
-
+                    //alert("fail"+JSON.stringify(data));
                 })
                 .always(function(data) {
 

@@ -49,12 +49,14 @@ $folders = $module->foldersForProject($module->getProjectId());
 </form>
 
 <?php
+
 if (!empty($_POST['upload-files'])) {
     echo '<p>Uploading Files...</p>';
     $api_key = $module->getProjectSetting('api-key');
     $endpoint = rtrim($module->getProjectSetting('endpoint'), "/") . "/";
     $api_version = $module->getProjectSetting('api-version');
-
+    $response = API::getCurlCall($api_key, "https://vumc-openai-16.openai.azure.com/openai/vector_stores/vs_dfdfh/files?api-version=2025-03-01-preview");
+    print_array(json_decode($response)); die;
     // VERIFY :: Get list of all vector stores
     /*$response = Api::getCurlCall($api_key, $endpoint . "vector_stores?api-version=" . $api_version);
     $res = json_decode($response);
@@ -74,7 +76,7 @@ if (!empty($_POST['upload-files'])) {
     $vsId = $module->vectorStoreIdforfolder($folderId, $projectId);
     if (is_null($vsId)) {
         /*************** STEP 1: Upload a Files from folder *****************************/
-        $docIds = $module->docsForFolder($folderId);
+        $docIds = $module->docsForFolder($folderId, $projectId);
         if (empty($docIds)) {
             print "<b>No files available in this folder.</b>";
             exit;
@@ -123,8 +125,8 @@ if (!empty($_POST['upload-files'])) {
         $vsfbId = $resVF['id'];
 
         // Insert vector store ID and folder ID in mapping DB table
-        $sql = "INSERT INTO redcap_folders_vector_stores_items (project_id, folder_id, vs_id)
-			            VALUES ('".$projectId."', '".$folderId."', '".$vsId."')";
+        $sql = "INSERT INTO redcap_folders_vector_stores_items (project_id, folder_id, vs_id, created_at)
+			            VALUES ('".$projectId."', '".$folderId."', '".$vsId."', '".NOW."')";
         db_query($sql);
     }
 
@@ -136,7 +138,7 @@ if (!empty($_POST['upload-files'])) {
     //print_array(json_decode($response)); die;
     /*************** STEP 4: Responses API *****************************/
 
-    $suffix = ($module->getProjectSetting('request-suffix') != '') ? $module->getProjectSetting('request-suffix') : 'Answer the question based on the uploaded files only. If not able to get answer from uploaded files, print "there is no information available regarding this question."';
+    $suffix = ($module->getProjectSetting('request-prepend-text') != '') ? $module->getProjectSetting('request-suffix') : 'Answer the question based on the uploaded files only. If not able to get answer from uploaded files, print "there is no information available regarding this question."';
     $suffix = ' '.$suffix;
 echo 'Who gets access to my data? Answer the question based on the uploaded files only.';
     $api_url = 'https://vumc-openai-16.openai.azure.com/openai/responses?api-version=2025-03-01-preview';  // Construct the correct endpoint

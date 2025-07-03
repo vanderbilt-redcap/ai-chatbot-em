@@ -36,10 +36,22 @@
             "type": "text"
         },
         {
-            "key": "request-suffix",
-            "name": "Enter Suffix<br>Default text which will be added as suffix to user entered request/prompt text",
-            "default": "Answer the question based on the uploaded files only. If not able to get answer from uploaded files, print \"there is no information available regarding this question.\"",
+            "key": "request-prepend-text",
+            "name": "Text to prepend to a question (Optional). <br/> (Example: \"Reformulate the response as a single paragraph.\")",
+            "default": "",
             "type": "textarea"
+        },
+        {
+            "key": "use-files-data",
+            "name": "Refer strictly to the uploaded file to provide response",
+            "type": "checkbox",
+            "default": true
+        },
+        {
+            "key": "custom-message",
+            "name": "Custom message to display in response if answer is not a part of any files<br>If empty, it will default to \"Sorry, We are unable to provide any information based on this question.\".",
+            "type": "textarea",
+            "default": "Sorry, We are unable to provide any information based on this question."
         }
     ],
     "compatibility": {
