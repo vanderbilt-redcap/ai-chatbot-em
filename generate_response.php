@@ -91,7 +91,10 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
                 [
                     "type" => "file_search",
                     'vector_store_ids' => [$vsId],
-                    "max_num_results" => 20
+                    "max_num_results" => 20,
+                    "ranking_options" => [
+                        "score_threshold" => 0.8
+                    ]
                 ]
             ],
             'input' => $prompt,
