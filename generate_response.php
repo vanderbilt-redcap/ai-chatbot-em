@@ -70,7 +70,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
         /*************** STEP 4: Responses API *****************************/
 
         $prependText = $module->getProjectSetting('request-prepend-text') ?: "Refer to the uploaded files and provide a response that strictly adheres to its content.";
-
+        $temperature = (float)$module->getProjectSetting("temperature") ?: 0.5;
         /*$prompt = $prependText
             ."<br>Limit your response to what is asked. Do not add any additional content, such as introductory remarks, explanations, etc.!"
             ."<br>Answer the question below:<br>"
@@ -95,7 +95,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
                 ]
             ],
             'input' => $prompt,
-            'temperature' => 1.5
+            'temperature' => $temperature
         ];
 
         $data_json = json_encode($data, JSON_UNESCAPED_SLASHES);
