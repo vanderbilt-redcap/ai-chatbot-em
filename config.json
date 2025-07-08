@@ -36,6 +36,11 @@
             "type": "text"
         },
         {
+            "key": "temperature",
+            "name": "Temperature",
+            "type": "text"
+        },
+        {
             "key": "request-prepend-text",
             "name": "Text to prepend to a question (Optional). <br/> (Example: \"Reformulate the response as a single paragraph.\")",
             "default": "",

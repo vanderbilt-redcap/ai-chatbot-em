@@ -49,14 +49,15 @@ $folders = $module->foldersForProject($module->getProjectId());
 </form>
 
 <?php
-
+$vsIds = ['vs_syqf6KXwLvpEza2a9a1kwJqH', 'vs_XTjAeiG7UyGFElC85a7fJmjE', 'vs_FUJv9U2k4Zzbjt8IcmJoeJGK', 'vs_g4hEDzH4GVIkUWKPxXULD13S'
+, 'vs_856VdlhlGRXFHRXuVKCuI7Qf', 'vs_edUSbs3wUEqCMUUbDyncHmH5', 'vs_C7q4igU29YjknjbxP9KazDNA'];
 if (!empty($_POST['upload-files'])) {
     echo '<p>Uploading Files...</p>';
     $api_key = $module->getProjectSetting('api-key');
     $endpoint = rtrim($module->getProjectSetting('endpoint'), "/") . "/";
     $api_version = $module->getProjectSetting('api-version');
-    $response = API::getCurlCall($api_key, "https://vumc-openai-16.openai.azure.com/openai/vector_stores/vs_dfdfh/files?api-version=2025-03-01-preview");
-    print_array(json_decode($response)); die;
+    //$response = API::getCurlCall($api_key, "https://vumc-openai-16.openai.azure.com/openai/vector_stores/vs_dfdfh/files?api-version=2025-03-01-preview");
+    //print_array(json_decode($response)); die;
     // VERIFY :: Get list of all vector stores
     /*$response = Api::getCurlCall($api_key, $endpoint . "vector_stores?api-version=" . $api_version);
     $res = json_decode($response);
@@ -66,9 +67,46 @@ if (!empty($_POST['upload-files'])) {
         $result = curlAPIDelete('https://vumc-openai-16.openai.azure.com/openai/vector_stores/'.$obj->id.'?api-version=2025-03-01-preview');
         echo $result;
     }*/
-    //$response = getCurlCall($api_key, "https://vumc-openai-16.openai.azure.com/openai/files?api-version=2025-03-01-preview");
-    //$response = getCurlCall($api_key, "https://vumc-openai-16.openai.azure.com/openai/vector_stores?api-version=2025-03-01-preview");
-    //print_array(json_decode($response));
+
+    $response = API::getCurlCall($api_key, "https://vumc-openai-16.openai.azure.com/openai/vector_stores?api-version=2025-03-01-preview");
+    $result = json_decode($response);
+    foreach ($result->data as $res) {
+        $vsId = $res->id;
+        echo $vsId."------";
+        $response = API::getCurlCall($api_key, "https://vumc-openai-16.openai.azure.com/openai/vector_stores/".$vsId."/files?api-version=2025-03-01-preview");
+        $result = json_decode($response);
+        if (count($result->data) > 0) {
+            foreach ($result->data as $res) {
+                $fileId = $res->id;
+                $vsAllFiles[] = $fileId;
+                //$result = API::deleteCurlCall($api_key, 'https://vumc-openai-16.openai.azure.com/openai/files/'.$fileId.'?api-version=2025-03-01-preview');
+                //var_dump($result);
+            }
+        }
+    }
+
+
+    $response = API::getCurlCall($api_key, "https://vumc-openai-16.openai.azure.com/openai/files?api-version=2025-03-01-preview");
+    //$response = API::getCurlCall($api_key, "https://vumc-openai-16.openai.azure.com/openai/vector_stores?api-version=2025-03-01-preview");
+    $result = json_decode($response);
+
+    /*$date = '2025-06-12 23:59:59';
+    foreach ($result->data as $res) {
+        $fileId = $res->id;
+        if (!in_array($fileId, $vsAllFiles)) {
+            $result = API::deleteCurlCall($api_key, 'https://vumc-openai-16.openai.azure.com/openai/files/'.$fileId.'?api-version=2025-03-01-preview');
+        } else {
+            $allFiles[] = $fileId;
+        }
+
+        $create_data = date("Y-m-d H:i:s", substr($res->created_at, 0, 10));
+        if ($create_data < $date) {
+            $result = API::deleteCurlCall($api_key, 'https://vumc-openai-16.openai.azure.com/openai/files/'.$fileId.'?api-version=2025-03-01-preview');
+            var_dump($result);
+        }
+    }*/
+    print_array($result); die;
+
 
     $folderId = $_POST['folder_id'];
     $projectId = $module->getProjectId();
