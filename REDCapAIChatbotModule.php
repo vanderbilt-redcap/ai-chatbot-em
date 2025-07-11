@@ -4,6 +4,7 @@ namespace Vanderbilt\REDCapAIChatbotModule;
 
 use ExternalModules\AbstractExternalModule;
 use ExternalModules\ExternalModules;
+use Api;
 
 /**
  * ExternalModule class for Instance-Type Indicator.
@@ -170,5 +171,63 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
         $sql = "select name from redcap_docs_folders where folder_id = $folder_id and project_id = ".$project_id;
         $q = db_query($sql);
         return (db_num_rows($q) ? db_result($q, 0, "name") : null);
+    }
+
+    function uploadFilesToVectorStore($folder_id, $projectId, $endpoint, $api_key, $api_version) {
+        /*************** STEP 1: Upload a Files from folder *****************************/
+        $docIds = $this->docsForFolder($folder_id, $projectId);
+
+        if (empty($docIds)) {
+            print "<b>No files available in this folder.</b>";
+            exit;
+        }
+        foreach ($docIds as $docId) {
+            $fileAttr = \Files::getEdocContentsAttributes($docId);
+            $curlFile = new \CURLStringFile($fileAttr[2], $fileAttr[1], $fileAttr[0]);
+            $data = [
+                'purpose' => 'assistants',
+                'file' => $curlFile,
+            ];
+
+            $headers = [
+                'Content-Type: multipart/form-data',
+                'Authorization: Bearer ' . $api_key,
+            ];
+
+            $resFileUpload = Api::curlAPIPost($api_key, $endpoint . "files?api-version=" . $api_version, $data, $headers);
+            $fileIds[] = $resFileUpload['id'];
+        }
+        /*************** STEP 2: Create New Vector Store *****************************/
+        $headers = [
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $api_key,
+            'OpenAI-Beta: assistants=v2',
+        ];
+        $data = [
+            'name' => "Shop FAQ"
+        ];
+
+        $resVS = Api::curlAPIPost($api_key, $endpoint . "vector_stores?api-version=" . $api_version, json_encode($data), $headers);
+        $vsId = $resVS['id'];
+
+        /*************** STEP 3: Add File to Vector Store *****************************/
+
+        $data = [
+            'file_ids' => $fileIds
+        ];
+        $headers = [
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $api_key,
+            'OpenAI-Beta: assistants=v2'
+        ];
+        $resVF = Api::curlAPIPost($api_key, $endpoint . "vector_stores/" . $vsId . "/file_batches?api-version=" . $api_version, json_encode($data), $headers);
+        $vsfbId = $resVF['id'];
+
+        // Insert vector store ID and folder ID in mapping DB table
+        $sql = "INSERT INTO redcap_folders_vector_stores_items (project_id, folder_id, vs_id, created_at)
+			            VALUES ('".$projectId."', '".$folder_id."', '".$vsId."', '".NOW."')";
+        db_query($sql);
+
+        return $vsId;
     }
 }

@@ -168,6 +168,7 @@ function generateResponse(chatElement) {
         if (data.status != 1) {
             alert(data.error.message);
         } else {
+            //typeWriterEffect(chatElement.querySelector("p"), data.message, 5); // Type into 'myDiv' with 50ms delay per character
             chatElement.querySelector("p").textContent = data.message;
         }
     })
@@ -192,12 +193,29 @@ function handleChat() {
     chatbox.append(createChatLi(userMessage, "outgoing"));
     chatbox.scrollTop(chatbox[0].scrollHeight);
 
-    setTimeout(() => {
-        // Display "Thinking..." message while waiting for the response
-        var generateText = '<img alt="Generating..." src="' + app_path_images + 'progress_circle.gif">&nbsp; Generating, Please wait...';
-        const incomingChatLi = createChatLi(generateText, "incoming");
-        chatbox.append(incomingChatLi);
-        chatbox.scrollTop(chatbox[0].scrollHeight);
-        generateResponse(incomingChatLi);
-    }, 600);
+    // Display "Thinking..." message while waiting for the response
+    var generateText = '<img alt="Generating..." src="' + app_path_images + 'progress_circle.gif">&nbsp; Generating, Please wait...';
+    const incomingChatLi = createChatLi(generateText, "incoming");
+    chatbox.append(incomingChatLi);
+    chatbox.scrollTop(chatbox[0].scrollHeight);
+    generateResponse(incomingChatLi);
+    /*setTimeout(() => {
+
+    }, 600);*/
+}
+
+function typeWriterEffect(elementId, newText, speed) {
+    const $element = elementId;
+    $element.textContent = ''; // Clear existing content
+    let i = 0;
+
+    function typeChar() {
+        if (i < newText.length) {
+            $element.append(newText.charAt(i));
+            i++;
+            setTimeout(typeChar, speed);
+        }
+    }
+
+    typeChar(); // Start the typing animation
 }

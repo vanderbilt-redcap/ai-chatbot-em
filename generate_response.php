@@ -14,57 +14,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
     if (!empty($folderId)) {
         $vsId = $module->vectorStoreIdforfolder($folderId, $projectId);
         if (is_null($vsId)) {
-            /*************** STEP 1: Upload a Files from folder *****************************/
-            $docIds = $module->docsForFolder($folderId, $projectId);
-            if (empty($docIds)) {
-                print "<b>No files available in this folder.</b>";
-                exit;
-            }
-            foreach ($docIds as $docId) {
-                $fileAttr = \Files::getEdocContentsAttributes($docId);
-                $curlFile = new \CURLStringFile($fileAttr[2], $fileAttr[1], $fileAttr[0]);
-                $headers = [
-                    'Content-Type: multipart/form-data',
-                    'Authorization: Bearer ' . $api_key,
-                ];
-
-                $data = [
-                    'purpose' => 'assistants',
-                    'file' => $curlFile,
-                ];
-                $resFileUpload = Api::curlAPIPost($api_key, $endpoint . "files?api-version=" . $api_version, $data, $headers);
-                $fileIds[] = $resFileUpload['id'];
-            }
-            /*************** STEP 2: Create New Vector Store *****************************/
-            $headers = [
-                'Content-Type: application/json',
-                'Authorization: Bearer ' . $api_key,
-                'OpenAI-Beta: assistants=v2',
-            ];
-            $data = [
-                'name' => "Shop FAQ"
-            ];
-
-            $resVS = Api::curlAPIPost($api_key, $endpoint . "vector_stores?api-version=" . $api_version, json_encode($data), $headers);
-            $vsId = $resVS['id'];
-
-            /*************** STEP 3: Add File to Vector Store *****************************/
-
-            $data = [
-                'file_ids' => $fileIds
-            ];
-            $headers = [
-                'Content-Type: application/json',
-                'Authorization: Bearer ' . $api_key,
-                'OpenAI-Beta: assistants=v2'
-            ];
-            $resVF = Api::curlAPIPost($api_key, $endpoint . "vector_stores/" . $vsId . "/file_batches?api-version=" . $api_version, json_encode($data), $headers);
-            $vsfbId = $resVF['id'];
-
-            // Insert vector store ID and folder ID in mapping DB table
-            $sql = "INSERT INTO redcap_folders_vector_stores_items (project_id, folder_id, vs_id, created_at)
-			            VALUES ('".$projectId."', '".$folderId."', '".$vsId."', '".NOW."')";
-            db_query($sql);
+            $vsId = $module->uploadFilesToVectorStore($folderId, $projectId, $endpoint, $api_key, $api_version);
         }
 
         /*************** STEP 4: Responses API *****************************/
@@ -110,7 +60,9 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
                     foreach ($output['content'] as $content) {
                         if (isset($content['text'])) {
                             $resText = $content['text'];
-                            $annotation_arr = $content['annotations'];
+                            if (!empty($content['annotations'])) {
+                                $annotation_arr[] = $content['annotations'];
+                            }
                         }
                     }
                 }
@@ -134,7 +86,8 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
         $endpoint = $_POST['endpoint'];
         $api_key = $_POST['api_key'];
         $api_version = $_POST['api_version'];
-        $vsId = uploadFilesToVectorStore($module, $folder_id, $projectId, $endpoint, $api_key, $api_version);
+
+        $vsId = $module->uploadFilesToVectorStore($folder_id, $projectId, $endpoint, $api_key, $api_version);
     }
     if (is_null($vsId))  $vsId = "";
     $output = ['status' => 1, 'message'  => $vsId];
@@ -198,7 +151,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
         $sql = "DELETE FROM redcap_folders_vector_stores_items 
                 WHERE project_id = '".$projectId."' AND folder_id = '".$folderId."' AND vs_id = '".$storedVSId."'";
         db_query($sql);
-        $vsId = uploadFilesToVectorStore($module, $folderId, $projectId, $endpoint, $api_key, $api_version);
+        $vsId = $module->uploadFilesToVectorStore($folderId, $projectId, $endpoint, $api_key, $api_version);
     }
     print "1"; exit;
 } else if (isset($_GET['action']) && $_GET['action'] == 'validate_em_setup') {
@@ -211,67 +164,5 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
     }
     print $response; exit;
 }
-function uploadFilesToVectorStore($module, $folder_id, $projectId, $endpoint, $api_key, $api_version) {
 
-    /*************** STEP 1: Upload a Files from folder *****************************/
-    $docIds = $module->docsForFolder($folder_id, $projectId);
-
-    if (empty($docIds)) {
-        print "<b>No files available in this folder.</b>";
-        exit;
-    }
-    foreach ($docIds as $docId) {
-        $fileAttr = \Files::getEdocContentsAttributes($docId);
-        $curlFile = new \CURLStringFile($fileAttr[2], $fileAttr[1], $fileAttr[0]);
-        $headers = [
-            'Content-Type: multipart/form-data',
-            'Authorization: Bearer ' . $api_key,
-        ];
-
-        $data = [
-            'purpose' => 'assistants',
-            'file' => $curlFile,
-        ];
-
-        $headers = [
-            'Content-Type: multipart/form-data',
-            'Authorization: Bearer ' . $api_key,
-        ];
-
-        $resFileUpload = Api::curlAPIPost($api_key, $endpoint . "files?api-version=" . $api_version, $data, $headers);
-        $fileIds[] = $resFileUpload['id'];
-    }
-    /*************** STEP 2: Create New Vector Store *****************************/
-    $headers = [
-        'Content-Type: application/json',
-        'Authorization: Bearer ' . $api_key,
-        'OpenAI-Beta: assistants=v2',
-    ];
-    $data = [
-        'name' => "Shop FAQ"
-    ];
-
-    $resVS = Api::curlAPIPost($api_key, $endpoint . "vector_stores?api-version=" . $api_version, json_encode($data), $headers);
-    $vsId = $resVS['id'];
-
-    /*************** STEP 3: Add File to Vector Store *****************************/
-
-    $data = [
-        'file_ids' => $fileIds
-    ];
-    $headers = [
-        'Content-Type: application/json',
-        'Authorization: Bearer ' . $api_key,
-        'OpenAI-Beta: assistants=v2'
-    ];
-    $resVF = Api::curlAPIPost($api_key, $endpoint . "vector_stores/" . $vsId . "/file_batches?api-version=" . $api_version, json_encode($data), $headers);
-    $vsfbId = $resVF['id'];
-
-    // Insert vector store ID and folder ID in mapping DB table
-    $sql = "INSERT INTO redcap_folders_vector_stores_items (project_id, folder_id, vs_id, created_at)
-			            VALUES ('".$projectId."', '".$folder_id."', '".$vsId."', '".NOW."')";
-    db_query($sql);
-
-    return $vsId;
-}
 print json_encode(($output));
