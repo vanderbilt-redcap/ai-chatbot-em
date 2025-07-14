@@ -88,7 +88,13 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
         $api_version = $_POST['api_version'];
 
         $vsId = $module->uploadFilesToVectorStore($folder_id, $projectId, $endpoint, $api_key, $api_version);
+    } else {
+        /*$storedVSId = $module->vectorStoreIdforfolder($folderId, $projectId, false);
+        if ($storedVSId != $vsId) {
+
+        }*/
     }
+
     if (is_null($vsId))  $vsId = "";
     $output = ['status' => 1, 'message'  => $vsId];
 } else if (isset($_GET['action']) && $_GET['action'] == 'get_files_info') {
@@ -142,15 +148,15 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
     $response = \Api::getCurlCall($api_key, $endpoint. "vector_stores/".$storedVSId."/files?api-version=".$api_version);
     $allFiles = json_decode($response);
 
-    $vsFilesCount = count($allFiles->data);
+    $vsFilesCount = (is_array($allFiles->data)) ? count($allFiles->data) : 0;
 
     if ($vsFilesCount != $storedFilesCount
         || $anyDateLater == true) { // At least one date in the array of docs created dates is later than the vector store created date.
 
-        // Delete existing entry of vector store ID and folder ID in mapping DB table
-        $sql = "DELETE FROM redcap_folders_vector_stores_items 
-                WHERE project_id = '".$projectId."' AND folder_id = '".$folderId."' AND vs_id = '".$storedVSId."'";
-        db_query($sql);
+        // Delete - 1. all files attached to old Vector store, 2. Vector Store, 3. existing entry of vector store ID and folder from DB
+        $vsId = $module->deleteVectorStore($folderId, $projectId, $storedVSId, $endpoint, $api_key, $api_version);
+
+        // Upload files from selected folder to new vector store and add entry in mapping DB table
         $vsId = $module->uploadFilesToVectorStore($folderId, $projectId, $endpoint, $api_key, $api_version);
     }
     print "1"; exit;

@@ -3,11 +3,10 @@
 namespace Vanderbilt\REDCapAIChatbotModule;
 
 use ExternalModules\AbstractExternalModule;
-use ExternalModules\ExternalModules;
 use Api;
 
 /**
- * ExternalModule class for Instance-Type Indicator.
+ * ExternalModule class for REDCap RAG-AI Chatbot.
  * 
  */
 class REDCapAIChatbotModule extends AbstractExternalModule {
@@ -54,9 +53,9 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
      *
      * @param $folder_id
      * @param $project_id
-     * @return array|int
-     * @see /redcap_vX.X.X/Design/online_designer.php
-     * 
+     * @param $returnCreatedTime
+     * @return int
+     *
      */
     public function vectorStoreIdforfolder($folder_id, $project_id, $returnCreatedTime = false)
     {
@@ -76,8 +75,7 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
      *
      * @param $folder_id
      * @param $project_id
-     * @return array|int
-     * @see /redcap_vX.X.X/Design/online_designer.php
+     * @return array
      */
     public function docsForFolder($folder_id, $project_id)
     {
@@ -100,12 +98,11 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
     }
 
     /**
-     * List all documents inside a folder
+     * Get folder name and all documents links inside a folder
      *
      * @param $folder_id
      * @param $project_id
-     * @return array|int
-     * @see /redcap_vX.X.X/Design/online_designer.php
+     * @return array
      */
     public function listAllFilesInfo($folder_id, $project_id)
     {
@@ -130,12 +127,11 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
     }
 
     /**
-     * List all documents inside a folder
+     * Return list of all documents details inside a folder
      *
      * @param $folder_id
      * @param $project_id
-     * @return array|int
-     * @see /redcap_vX.X.X/Design/online_designer.php
+     * @return array
      */
     public function listAllFilesDetails($folder_id, $project_id)
     {
@@ -158,12 +154,26 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
         return $docsList;
     }
 
+    /**
+     * Get list of all files stored at vector store at azure portal
+     *
+     * @param $api_key
+     * @param $endpoint
+     * @return array
+     */
     public function getFilesListStoredAtVectorStore($api_key, $endpoint) {
         $response = \Api::getCurlCall($api_key, $endpoint);
         $allFiles = json_decode($response);
         return $allFiles;
     }
 
+    /**
+     * Get folder name by folder id
+     *
+     * @param $folder_id
+     * @param $project_id
+     * @return string
+     */
     public function getFolderName($folder_id, $project_id)
     {
         if (!isinteger($folder_id)) return null;
@@ -173,6 +183,17 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
         return (db_num_rows($q) ? db_result($q, 0, "name") : null);
     }
 
+    /**
+     * Upload Files to Vector store via API upon selecting folder at configuration and return vs ID stored at DB
+     *
+     * @param $folder_id
+     * @param $projectId
+     * @param $endpoint
+     * @param $api_key
+     * @param $api_version
+     *
+     * @return array
+     */
     function uploadFilesToVectorStore($folder_id, $projectId, $endpoint, $api_key, $api_version) {
         /*************** STEP 1: Upload a Files from folder *****************************/
         $docIds = $this->docsForFolder($folder_id, $projectId);
@@ -198,13 +219,14 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
             $fileIds[] = $resFileUpload['id'];
         }
         /*************** STEP 2: Create New Vector Store *****************************/
+        $folder_name = $this->getFolderName($folder_id, $projectId);
         $headers = [
             'Content-Type: application/json',
             'Authorization: Bearer ' . $api_key,
             'OpenAI-Beta: assistants=v2',
         ];
         $data = [
-            'name' => "Shop FAQ"
+            'name' => $folder_name
         ];
 
         $resVS = Api::curlAPIPost($api_key, $endpoint . "vector_stores?api-version=" . $api_version, json_encode($data), $headers);
@@ -229,5 +251,39 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
         db_query($sql);
 
         return $vsId;
+    }
+
+    /**
+     * Delete Vector store and files attached to a vector store via API upon selecting another folder at configuration or clicked sync button
+     *
+     * @param $folderId
+     * @param $projectId
+     * @param $vsId
+     * @param $endpoint
+     * @param $api_key
+     * @param $api_version
+     *
+     * @return void
+     */
+    function deleteVectorStore($folderId, $projectId, $vsId, $endpoint, $api_key, $api_version) {
+        /************ Step 1: Delete files attached to Vector Store via API call ************************************/
+        $response = API::getCurlCall($api_key, $endpoint . "vector_stores/" . $vsId . "/files?api-version=". $api_version);
+        $result = json_decode($response);
+        if (count($result->data) > 0) {
+            foreach ($result->data as $res) {
+                $fileId = $res->id;
+                $res = API::deleteCurlCall($api_key, $endpoint . "files/" . $fileId . "?api-version=".$api_version);
+                $result = json_decode($res);
+                $resArr[] = $result->deleted; // For debug purpose
+            }
+        }
+        /************ Step 2: Delete a Vector Store via API call ************************************/
+        $result = API::deleteCurlCall($api_key, $endpoint . "vector_stores/" . $vsId . "?api-version=".$api_version);
+        $res = json_decode($result); // For debug purpose
+
+        /************ Step 3: Delete existing entry of vector store ID and folder ID in mapping DB table ************************************/
+        $sql = "DELETE FROM redcap_folders_vector_stores_items 
+                WHERE project_id = '".$projectId."' AND folder_id = '".$folderId."' AND vs_id = '".$vsId."'";
+        db_query($sql);
     }
 }
