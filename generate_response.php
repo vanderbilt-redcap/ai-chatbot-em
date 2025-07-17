@@ -11,7 +11,7 @@ $api_version = $module->getProjectSetting('api-version');
 $folderId = $module->getProjectSetting('folder-id');
 
 if (isset($_POST['action']) && $_POST['action'] == 'generate') {
-    $debug = false;
+    $debug = true;
     if (!empty($folderId)) {
         $start_time = microtime(true);
         $vsId = $module->vectorStoreIdforfolder($folderId, $projectId);
@@ -21,7 +21,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
 
         /*************** STEP 4: Responses API *****************************/
 
-        $prependText = $module->getProjectSetting('request-prepend-text') ?: "Refer to the uploaded files and provide a response that strictly adheres to its content.";
+        $prependText = $module->getProjectSetting('request-prepend-text') ?: "You are an assistant which answers questions based on knowledge which is provided to you. You provide accurate and concise answers. While answering, you don't use your internal knowledge, but solely the information in the uploaded files. You don't mention anything to the user about the provided files.";
         $temperature = (float)$module->getProjectSetting("temperature") ?: 0.5;
         /*$prompt = $prependText
             ."<br>Limit your response to what is asked. Do not add any additional content, such as introductory remarks, explanations, etc.!"
@@ -49,6 +49,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
                     ]
                 ]
             ],
+            'include' => ["file_search_call.results"],
             'input' => $prompt,
             'temperature' => $temperature
         ];
@@ -89,7 +90,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
         $end_time = microtime(true);
         $execution_time = ($end_time - $start_time);
         if ($debug == true) {
-            $resText .= " --- Execution time: $execution_time sec";
+            $resText .= "<br><i style='font-size: 11px; color: #666;'>Execution time: ".number_format($execution_time, 2, '.', '')." sec</i>";
         }
         $output = ['status' => 1, 'message'  => $resText];
     }
@@ -169,7 +170,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
         || $anyDateLater == true) { // At least one date in the array of docs created dates is later than the vector store created date.
 
         // Delete - 1. all files attached to old Vector store, 2. Vector Store, 3. existing entry of vector store ID and folder from DB
-        $vsId = $module->deleteVectorStore($folderId, $projectId, $storedVSId, $endpoint, $api_key, $api_version);
+        $module->deleteVectorStore($folderId, $projectId, $storedVSId, $endpoint, $api_key, $api_version);
 
         // Upload files from selected folder to new vector store and add entry in mapping DB table
         $vsId = $module->uploadFilesToVectorStore($folderId, $projectId, $endpoint, $api_key, $api_version);
