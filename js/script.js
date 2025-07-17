@@ -173,7 +173,7 @@ function generateResponse(chatElement) {
             alert(data.error.message);
         } else {
             //typeWriterEffect(chatElement.querySelector("p"), data.message, 5); // Type into 'myDiv' with 50ms delay per character
-            chatElement.querySelector("p").textContent = data.message;
+            chatElement.querySelector("p").innerHTML = data.message;
         }
     })
     .fail(function(data) {
