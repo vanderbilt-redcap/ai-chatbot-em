@@ -11,7 +11,9 @@ $api_version = $module->getProjectSetting('api-version');
 $folderId = $module->getProjectSetting('folder-id');
 
 if (isset($_POST['action']) && $_POST['action'] == 'generate') {
+    $debug = false;
     if (!empty($folderId)) {
+        $start_time = microtime(true);
         $vsId = $module->vectorStoreIdforfolder($folderId, $projectId);
         if (is_null($vsId)) {
             $vsId = $module->uploadFilesToVectorStore($folderId, $projectId, $endpoint, $api_key, $api_version);
@@ -41,7 +43,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
                 [
                     "type" => "file_search",
                     'vector_store_ids' => [$vsId],
-                    "max_num_results" => 20,
+                    "max_num_results" => 4,
                     "ranking_options" => [
                         "score_threshold" => 0.8
                     ]
@@ -50,11 +52,19 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
             'input' => $prompt,
             'temperature' => $temperature
         ];
+        if (isset($_SESSION['prev_response_id']) && $_SESSION['prev_response_id'] != '') {
+            $data['previous_response_id'] = $_SESSION['prev_response_id'];
+        }
 
         $data_json = json_encode($data, JSON_UNESCAPED_SLASHES);
         $response = Api::curlAPIPost($api_key, $endpoint . "responses?api-version=" . $api_version, json_encode($data), $headers);
         //print_array($response); die;
         if (is_array($response) && isset($response['output'])) {
+            $_SESSION['prev_response_id'] = $response['id'];
+            // Insert into log table to log question and response received
+            $sql = "INSERT INTO redcap_ai_chatbot_log (project_id, folder_id, vs_id, question, response, created_at)
+			            VALUES ('".$projectId."', '".$folderId."', '".$vsId."', '".db_escape($prompt)."', '".json_encode($response)."', '".NOW."')";
+            db_query($sql);
             foreach ($response['output'] as $output) {
                 if (isset($output['content'])) {
                     foreach ($output['content'] as $content) {
@@ -76,6 +86,11 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
                 $resText = "Sorry, We are unable to provide any information based on this question.";
             }
         }
+        $end_time = microtime(true);
+        $execution_time = ($end_time - $start_time);
+        if ($debug == true) {
+            $resText .= " --- Execution time: $execution_time sec";
+        }
         $output = ['status' => 1, 'message'  => $resText];
     }
 } else if (isset($_POST['action']) && $_POST['action'] == 'upload_to_vs') {
@@ -88,7 +103,13 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
         $api_version = $_POST['api_version'];
 
         $vsId = $module->uploadFilesToVectorStore($folder_id, $projectId, $endpoint, $api_key, $api_version);
+    } else {
+        /*$storedVSId = $module->vectorStoreIdforfolder($folderId, $projectId, false);
+        if ($storedVSId != $vsId) {
+
+        }*/
     }
+
     if (is_null($vsId))  $vsId = "";
     $output = ['status' => 1, 'message'  => $vsId];
 } else if (isset($_GET['action']) && $_GET['action'] == 'get_files_info') {
@@ -142,15 +163,15 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
     $response = \Api::getCurlCall($api_key, $endpoint. "vector_stores/".$storedVSId."/files?api-version=".$api_version);
     $allFiles = json_decode($response);
 
-    $vsFilesCount = count($allFiles->data);
+    $vsFilesCount = (is_array($allFiles->data)) ? count($allFiles->data) : 0;
 
     if ($vsFilesCount != $storedFilesCount
         || $anyDateLater == true) { // At least one date in the array of docs created dates is later than the vector store created date.
 
-        // Delete existing entry of vector store ID and folder ID in mapping DB table
-        $sql = "DELETE FROM redcap_folders_vector_stores_items 
-                WHERE project_id = '".$projectId."' AND folder_id = '".$folderId."' AND vs_id = '".$storedVSId."'";
-        db_query($sql);
+        // Delete - 1. all files attached to old Vector store, 2. Vector Store, 3. existing entry of vector store ID and folder from DB
+        $vsId = $module->deleteVectorStore($folderId, $projectId, $storedVSId, $endpoint, $api_key, $api_version);
+
+        // Upload files from selected folder to new vector store and add entry in mapping DB table
         $vsId = $module->uploadFilesToVectorStore($folderId, $projectId, $endpoint, $api_key, $api_version);
     }
     print "1"; exit;

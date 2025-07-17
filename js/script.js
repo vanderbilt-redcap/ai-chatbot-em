@@ -43,7 +43,9 @@ $( document ).ready(function() {
 
     // Clicked on "Send" icon on bottom of chat window near question
     sendChatBtn.click(function (){
+        var start = new Date();
         handleChat();
+        console.log("Total time is "+(new Date() - start)+" sec");
     });
 
     closeBtn.click(function () {
@@ -68,12 +70,14 @@ $( document ).ready(function() {
     });
 
     chatInput.on( "keydown", function(e) {
+        var start = new Date();
         // If Enter key is pressed without Shift key and the window
         // width is greater than 800px, handle the chat
         if (e.key === "Enter" && !e.shiftKey && window.innerWidth > 800) {
             e.preventDefault();
             handleChat();
         }
+        console.log("--Total time is "+(new Date() - start)+" sec");
     });
 
     chatInput.on( "input", function(e) {

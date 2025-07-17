@@ -59,10 +59,10 @@ if (!empty($_POST['upload-files'])) {
     //$response = API::getCurlCall($api_key, "https://vumc-openai-16.openai.azure.com/openai/vector_stores/vs_dfdfh/files?api-version=2025-03-01-preview");
     //print_array(json_decode($response)); die;
     // VERIFY :: Get list of all vector stores
-    /*$response = Api::getCurlCall($api_key, $endpoint . "vector_stores?api-version=" . $api_version);
+    $response = Api::getCurlCall($api_key, $endpoint . "vector_stores?api-version=" . $api_version);
     $res = json_decode($response);
     print_array($res); die;
-    foreach ($res->data as $obj) {
+    /*foreach ($res->data as $obj) {
         // Delete a vector store
         $result = curlAPIDelete('https://vumc-openai-16.openai.azure.com/openai/vector_stores/'.$obj->id.'?api-version=2025-03-01-preview');
         echo $result;
