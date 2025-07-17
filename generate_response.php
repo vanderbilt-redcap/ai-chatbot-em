@@ -11,7 +11,9 @@ $api_version = $module->getProjectSetting('api-version');
 $folderId = $module->getProjectSetting('folder-id');
 
 if (isset($_POST['action']) && $_POST['action'] == 'generate') {
+    $debug = false;
     if (!empty($folderId)) {
+        $start_time = microtime(true);
         $vsId = $module->vectorStoreIdforfolder($folderId, $projectId);
         if (is_null($vsId)) {
             $vsId = $module->uploadFilesToVectorStore($folderId, $projectId, $endpoint, $api_key, $api_version);
@@ -41,7 +43,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
                 [
                     "type" => "file_search",
                     'vector_store_ids' => [$vsId],
-                    "max_num_results" => 20,
+                    "max_num_results" => 4,
                     "ranking_options" => [
                         "score_threshold" => 0.8
                     ]
@@ -50,11 +52,19 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
             'input' => $prompt,
             'temperature' => $temperature
         ];
+        if (isset($_SESSION['prev_response_id']) && $_SESSION['prev_response_id'] != '') {
+            $data['previous_response_id'] = $_SESSION['prev_response_id'];
+        }
 
         $data_json = json_encode($data, JSON_UNESCAPED_SLASHES);
         $response = Api::curlAPIPost($api_key, $endpoint . "responses?api-version=" . $api_version, json_encode($data), $headers);
         //print_array($response); die;
         if (is_array($response) && isset($response['output'])) {
+            $_SESSION['prev_response_id'] = $response['id'];
+            // Insert into log table to log question and response received
+            $sql = "INSERT INTO redcap_ai_chatbot_log (project_id, folder_id, vs_id, question, response, created_at)
+			            VALUES ('".$projectId."', '".$folderId."', '".$vsId."', '".db_escape($prompt)."', '".json_encode($response)."', '".NOW."')";
+            db_query($sql);
             foreach ($response['output'] as $output) {
                 if (isset($output['content'])) {
                     foreach ($output['content'] as $content) {
@@ -75,6 +85,11 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
             } else {
                 $resText = "Sorry, We are unable to provide any information based on this question.";
             }
+        }
+        $end_time = microtime(true);
+        $execution_time = ($end_time - $start_time);
+        if ($debug == true) {
+            $resText .= " --- Execution time: $execution_time sec";
         }
         $output = ['status' => 1, 'message'  => $resText];
     }
