@@ -36,11 +36,6 @@
             "type": "text"
         },
         {
-            "key": "temperature",
-            "name": "Temperature",
-            "type": "text"
-        },
-        {
             "key": "request-prepend-text",
             "name": "Text to prepend to a question (Optional). <br/> (Example: \"Reformulate the response as a single paragraph.\")",
             "default": "",
@@ -57,6 +52,30 @@
             "name": "Custom message to display in response if answer is not a part of any files<br>If empty, it will default to \"Sorry, We are unable to provide any information based on this question.\".",
             "type": "textarea",
             "default": "Sorry, We are unable to provide any information based on this question."
+        },
+        {
+            "key": "temperature",
+            "name": "Temperature",
+            "type": "text",
+            "default": "0.5"
+        },
+        {
+            "key": "max_num_results",
+            "name": "Max Num Results",
+            "type": "text",
+            "default": "4"
+        },
+        {
+            "key": "score_threshold",
+            "name": "Score Threshold",
+            "type": "text",
+            "default": "0.8"
+        },
+        {
+            "key": "max_output_tokens",
+            "name": "Max Output Tokens",
+            "type": "text",
+            "default": "4000"
         }
     ],
     "compatibility": {
