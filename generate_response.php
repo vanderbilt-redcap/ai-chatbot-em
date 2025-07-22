@@ -36,7 +36,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
         ];
         // Example conversation
         $data = [
-            'model' => 'gpt-4.5-preview',
+            'model' => 'gpt-4o-mini',
             'tools' => [
                 [
                     "type" => "file_search",
