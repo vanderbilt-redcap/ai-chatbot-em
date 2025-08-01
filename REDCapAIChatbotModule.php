@@ -20,6 +20,7 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
 
     }
     function redcap_every_page_top($project_id) {
+        unset($_SESSION['prev_response_id']);
         if (!is_null($project_id)) {
             ?>
             <link rel="stylesheet" href="<?php echo $this->getUrl('ai_chat/style.css'); ?>">
