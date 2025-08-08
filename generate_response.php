@@ -21,7 +21,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
 
         /*************** STEP 4: Responses API *****************************/
 
-        $prependText = $module->getProjectSetting('request-prepend-text') ?: "You are an assistant which answers questions based on knowledge which is provided to you. You provide accurate and concise answers. While answering, you don't use your internal knowledge, but solely the information in the uploaded files. You don't mention anything to the user about the provided files.";
+        $prependText = $module->getProjectSetting('request-prepend-text') ?: "You are an assistant which answers questions based on knowledge which is provided to you. You provide accurate and concise answers. While answering, you don't use your internal knowledge, but solely the information in the uploaded files. You don't mention any reference of files in response.";
         $temperature = (float)$module->getProjectSetting("temperature") ?: 0.5;
         $max_num_results = (float)$module->getProjectSetting("max_num_results") ?: 4;
         $score_threshold = (float)$module->getProjectSetting("score_threshold") ?: 0.8;
