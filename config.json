@@ -17,7 +17,7 @@
     "project-settings": [
         {
             "key": "folder-id",
-            "name": "REDCap Folder (external source) to utilize to generate response",
+            "name": "REDCap Folder<br/><span style='font-size:11px; color:#800000;'>(External source) to utilize to generate response</span>",
             "type": "folder-list"
         },
         {
@@ -32,16 +32,15 @@
         },
         {
             "key": "api-version",
-            "name": "API Model Version<br>(Example models for Azure-hosted OpenAI: 2024-02-01, 2024-08-01-preview.)",
+            "name": "API Model Version<br/><span style='font-size:11px; color:#800000;'>(Example models for Azure-hosted OpenAI: 2024-02-01, 2024-08-01-preview.)</span>",
             "type": "text"
         },
         {
             "key": "request-prepend-text",
-            "name": "Text to prepend to a question (Optional). <br/> (Example: \"Reformulate the response as a single paragraph.\")",
+            "name": "Text to prepend to a question (Optional). <br/><span style='font-size:11px; color:#800000;'>(Example: \"Reformulate the response as a single paragraph.\")</span>",
             "default": "",
             "type": "textarea"
-        },
-        {
+        },        {
             "key": "use-files-data",
             "name": "Refer strictly to the uploaded file to provide response",
             "type": "checkbox",
@@ -49,31 +48,31 @@
         },
         {
             "key": "custom-message",
-            "name": "Custom message to display in response if answer is not a part of any files<br>If empty, it will default to \"Sorry, We are unable to provide any information based on this question.\".",
+            "name": "Custom message to display in response if answer is not a part of any files<br><span style='font-size:11px; color:#800000;'>If empty, it will default to \"Sorry, We are unable to provide any information based on this question.\".</span>",
             "type": "textarea",
             "default": "Sorry, We are unable to provide any information based on this question."
         },
         {
             "key": "temperature",
-            "name": "Temperature",
+            "name": "Temperature<br/><span style='font-size:11px; color:#800000;'>Default: 0.5, Value should be between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.</span>",
             "type": "text",
             "default": "0.5"
         },
         {
             "key": "max_num_results",
-            "name": "Max Num Results",
+            "name": "Max Num Results<br/><span style='font-size:11px; color:#800000;'>Default: 4, The maximum number of results to return. This number should be between 1 and 50 inclusive.</span>",
             "type": "text",
             "default": "4"
         },
         {
             "key": "score_threshold",
-            "name": "Score Threshold",
+            "name": "Score Threshold<br/><span style='font-size:11px; color:#800000;'>Default: 0.8, Value should be a number between 0 and 1. Numbers closer to 1 will attempt to return only the most relevant results, but may return fewer results.</span>",
             "type": "text",
             "default": "0.8"
         },
         {
             "key": "max_output_tokens",
-            "name": "Max Output Tokens",
+            "name": "Max Output Tokens<br/><span style='font-size:11px; color:#800000;'>Default: 4000, An upper bound for the number of tokens that can be generated for a response, including visible output tokens and reasoning tokens.</span>",
             "type": "text",
             "default": "4000"
         }
