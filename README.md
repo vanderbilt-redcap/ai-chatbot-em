@@ -4,7 +4,7 @@
 Prototype module for REDCap-RAG (Retrieval Augmented Generation) AI Integration. Currently working towards using OpenAI to allow users to integrate external knowledge bases (i.e. Files inside REDCap folders) during the response generation process.
 
 ### Project-Level Settings
-* **REDCap Folder:** This must be set for the purpose of external source to utilize to generate response. OpenAI API will generate response based on uploaded file(s) inside selected REDCap folder.
+* **REDCap Folder:** This must be set for the purpose of external source to utilize to generate response. OpenAI API will generate response based on uploaded file(s) inside selected REDCap folder. <br/>Steps to create a REDCap folder: In left panel, Go to "Applications -> File Repository", Click "Create Folder" button, create a folder. Go to folder and upload one or more documents inside a folder.
 * **OpenAI Crediential:** A valid Credientials from your Azure OpenAI instance. 
   * **OpenAI API Key**
   * **OpenAI Endpoint URL**
