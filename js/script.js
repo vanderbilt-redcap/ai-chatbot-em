@@ -159,6 +159,14 @@ $( document ).ready(function() {
             }, 0);
         }
     });
+
+    $(document).on("input", ".rc-question-area" , function(){
+        if($(this).val().trim() != "") {
+            $(this).next('span').css("color", "#DB5E69");
+        } else {
+            $(this).next('span').css("color", "#888");
+        }
+    });
 });
 
 function fileRCRepoDownload(doc_id, param_name)
@@ -211,6 +219,9 @@ function generateResponse(chatElement, setupNum) {
 function handleChat(chatInput = '', chatbox = '', setupNum = '') {
     if (chatInput == '') {
         chatInput = $(".chat-input textarea");
+        $("#send-btn").css("color", "#888");
+    } else {
+        chatInput.next('span').css("color", "#888");
     }
     if (chatbox == '') {
         chatbox = $(".chatbox");
@@ -220,7 +231,7 @@ function handleChat(chatInput = '', chatbox = '', setupNum = '') {
 
     // Clear the input textarea and set its height to default
     chatInput.val("");
-    $("#send-btn").css("color", "#888");
+
     chatInput.height("${inputInitHeight}px");
 
     // Append the user's message to the chatbox
@@ -276,8 +287,8 @@ function insertChatBot(name, setupNum) {
         "        </li>\n" +
         "    </ul>\n" +
         "  <div class=\"rc-chatbot-input\">\n" +
-        "    <textarea id=\"rc-user-input\" placeholder=\"Enter a question...\"></textarea>\n" +
-        "    <span onclick=\"askQuestion('"+name+"', "+setupNum+")\"><i class=\"fas fa-arrow-alt-circle-up\"></i></span>\n" +
+        "    <textarea id=\"rc-user-input\" class=\"rc-question-area\" placeholder=\"Enter a question...\"></textarea>\n" +
+        "    <span style='vertical-align: middle; padding:15px 15px 15px 0; color: #888;' onclick=\"askQuestion('"+name+"', "+setupNum+")\"><i class=\"fas fa-arrow-alt-circle-up fa-2xl\"></i></span>\n" +
         "  </div>\n" +
         "</div>";
 
