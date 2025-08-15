@@ -26,6 +26,7 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
             <link rel="stylesheet" href="<?php echo $this->getUrl('ai_chat/style.css'); ?>">
             <script>
                 var get_response_url = "<?php echo $this->getUrl('generate_response.php'); ?>";
+                var rc_chatbot_css_url = "<?php echo $this->getUrl('ai_chat/rc_chatbot.css'); ?>"
             </script>
             <script src="<?php echo $this->getUrl('js/script.js'); ?>" defer></script>
 

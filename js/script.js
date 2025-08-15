@@ -26,10 +26,11 @@ $( document ).ready(function() {
             dropdownMenu.css("display", "block");
             var fetchText = '<div style="margin: 10px;"><img alt="Fetching from Vector Store..." src="' + app_path_images + 'progress_circle.gif">&nbsp; Fetching, Please wait...</div>';
             $(".chatbot .dropdown-menu").html(fetchText);
+            var url_param = getSettingNumParam();
             // Get list of filenames from Vector Store
             $.ajax({
                 cache: false,
-                url: get_response_url+'&action=get_files_info',
+                url: get_response_url+'&action=get_files_info'+url_param,
                 success: function (data) {
                     $(".chatbot .dropdown-menu").html(data);
                 },
@@ -57,8 +58,19 @@ $( document ).ready(function() {
             cache: false,
             url: get_response_url+'&action=validate_em_setup',
             success: function (data) {
-                if (data == 1) {
+                var arr = data.split("###");
+                if (arr[0] == 1) {
                     document.body.classList.toggle("show-chatbot");
+                    var count = arr[1];
+                    if (count > 1) {
+                        if ($(".div-settings").is(":hidden")) {
+                            for (let i = 0; i < count; i++) {
+                                // Append a new option with value (i+1) and text "Setting (i+1)"
+                                $('#setting-sel').append('<option value="'+(i+1)+'">Setting '+ (i+1) +'</option>');
+                                $('.div-settings').show();
+                            }
+                        }
+                    }
                 } else {
                     alert("Error: Module is not configured. Please complete set up.");
                 }
@@ -69,6 +81,11 @@ $( document ).ready(function() {
         });
     });
 
+    $('#setting-sel').change(function () {
+        var loadingText = '<div id="loading-div" style="margin-left: 10px; float: left;"><img alt="Loading Setting..." src="' + app_path_images + 'progress_circle.gif">&nbsp; Loading Setting...</div>';
+        $(this).parent().after(loadingText);
+        setTimeout(function() { $("#loading-div").remove(); }, 4000);
+    });
     chatInput.on( "keydown", function(e) {
         var start = new Date();
         // If Enter key is pressed without Shift key and the window
@@ -94,9 +111,10 @@ $( document ).ready(function() {
 
     $(".chatbot span.sync-icon").click(function() {
         $(".status-msg").html('<img alt="Processing..." src="' + app_path_images + 'progress_circle.gif">&nbsp; Syncing, Please wait...');
+        var url_param = getSettingNumParam();
         $.ajax({
             cache: false,
-            url: get_response_url+'&action=sync_to_vs',
+            url: get_response_url+'&action=sync_to_vs'+url_param,
             success: function (data) {
                 showProgress(0,0);
                 if (data == 1) {
@@ -113,16 +131,15 @@ $( document ).ready(function() {
         var moduleDirectoryPrefix = $('#external-modules-configure-modal').data('module');
 
         if (moduleDirectoryPrefix == 'redcap_ai_chatbot') {
+            var formData = $(this).parent().prev('div').find('input, textarea, select').serialize();
+
             setTimeout(function() {
                 $.ajax({
                     method: 'POST',
                     url: get_response_url,
                     data: {
                         action: "upload_to_vs",
-                        folder_id: $('select[name="folder-id"]').val(),
-                        api_key: $('input[name="api-key"]').val(),
-                        endpoint: $('input[name="endpoint"]').val(),
-                        api_version: $('input[name="api-version"]').val()
+                        formData: formData
                     },
                     dataType: 'json'
                 })
@@ -161,10 +178,17 @@ function createChatLi(message, className) {
     return chatLi; // return chat <li> element
 }
 
-function generateResponse(chatElement) {
+function generateResponse(chatElement, setupNum) {
+    var url_param = '';
+    if (setupNum != '') {
+        url_param = '&setup_num='+setupNum;
+    } else {
+        url_param = getSettingNumParam();
+    }
+
     $.ajax({
         method: 'POST',
-        url: get_response_url,
+        url: get_response_url+url_param,
         data: { prompt_text: userMessage, action: "generate"},
         dataType: 'json'
     })
@@ -184,7 +208,13 @@ function generateResponse(chatElement) {
     });
 }
 
-function handleChat() {
+function handleChat(chatInput = '', chatbox = '', setupNum = '') {
+    if (chatInput == '') {
+        chatInput = $(".chat-input textarea");
+    }
+    if (chatbox == '') {
+        chatbox = $(".chatbox");
+    }
     userMessage = chatInput.val().trim(); // Get user entered message and remove extra whitespace
     if (!userMessage) return;
 
@@ -202,10 +232,7 @@ function handleChat() {
     const incomingChatLi = createChatLi(generateText, "incoming");
     chatbox.append(incomingChatLi);
     chatbox.scrollTop(chatbox[0].scrollHeight);
-    generateResponse(incomingChatLi);
-    /*setTimeout(() => {
-
-    }, 600);*/
+    generateResponse(incomingChatLi, setupNum);
 }
 
 function typeWriterEffect(elementId, newText, speed) {
@@ -222,4 +249,40 @@ function typeWriterEffect(elementId, newText, speed) {
     }
 
     typeChar(); // Start the typing animation
+}
+function getSettingNumParam() {
+    var url_param = '';
+    if ($(".div-settings").is(":visible")) {
+        var settingNum = $('#setting-sel').find(":selected").val();
+        url_param = '&setup_num='+settingNum;
+    }
+    return url_param;
+}
+
+function insertChatBot(name, setupNum) {
+    // Utilize first setup by default
+    if (setupNum == undefined || setupNum == '') setupNum = 1;
+
+    $('head').append('<link rel="stylesheet" type="text/css" href="'+rc_chatbot_css_url+'">');
+
+    var html = "<div style='margin-top: 10px;' class=\"rc-chatbot-container\">\n" +
+        "  <div class=\"rc-chatbot-header\">\n" +
+        "    REDCap Chatbot\n" +
+        "  </div>\n" +
+        "  <ul class=\"rc-chatbox\">\n" +
+        "        <li class=\"chat incoming\">\n" +
+        "            <span><i class=\"fas fa-robot\"></i></span>\n" +
+        "            <p>Hi there <br>How can I help you today?</p>\n" +
+        "        </li>\n" +
+        "    </ul>\n" +
+        "  <div class=\"rc-chatbot-input\">\n" +
+        "    <textarea id=\"rc-user-input\" placeholder=\"Enter a question...\"></textarea>\n" +
+        "    <span onclick=\"askQuestion('"+name+"', "+setupNum+")\"><i class=\"fas fa-arrow-alt-circle-up\"></i></span>\n" +
+        "  </div>\n" +
+        "</div>";
+
+    $('tr#'+name+'-tr').find('td:first-child div:first').append(html);
+}
+function askQuestion(name, setupNum) {
+    handleChat($('tr#'+name+'-tr').find("#rc-user-input"), $('tr#'+name+'-tr').find(".rc-chatbox"), setupNum);
 }
