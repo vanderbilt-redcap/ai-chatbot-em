@@ -292,7 +292,12 @@ function insertChatBot(name, setupNum) {
         "  </div>\n" +
         "</div>";
 
-    $('tr#'+name+'-tr').find('td:first-child div:first').append(html);
+    if ($('tr#'+name+'-tr').find('td:first-child div:first').length > 0) {
+        $('tr#'+name+'-tr').find('td:first-child div:first').append(html);
+    } else {
+        $('tr#'+name+'-tr').find('td:nth-child(2) div:first').append(html);
+    }
+
 }
 function askQuestion(name, setupNum) {
     handleChat($('tr#'+name+'-tr').find("#rc-user-input"), $('tr#'+name+'-tr').find(".rc-chatbox"), setupNum);
