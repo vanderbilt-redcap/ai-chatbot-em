@@ -5,10 +5,21 @@ $output = ['status' => 0, 'message'   => ''];
 
 $projectId = $module->getProjectId();
 
-$api_key = $module->getProjectSetting('api-key');
-$endpoint = rtrim($module->getProjectSetting('endpoint'), "/") . "/";
-$api_version = $module->getProjectSetting('api-version');
-$folderId = $module->getProjectSetting('folder-id');
+$settings = $module->getProjectSetting('settings');
+$api_keys = $module->getProjectSetting('api-key');
+$endpoints = $module->getProjectSetting('endpoint');
+$api_versions = $module->getProjectSetting('api-version');
+$folderIds = $module->getProjectSetting('folder-id');
+
+$num = 0;
+if (isset($_GET['setup_num'])) {
+    $num = ($_GET['setup_num'] - 1);
+}
+
+$api_key = $api_keys[$num];
+$endpoint = rtrim($endpoints[$num], "/") . "/";
+$api_version = $api_versions[$num];
+$folderId = $folderIds[$num];
 
 if (isset($_POST['action']) && $_POST['action'] == 'generate') {
     $debug = true;
@@ -21,11 +32,11 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
 
         /*************** STEP 4: Responses API *****************************/
 
-        $prependText = $module->getProjectSetting('request-prepend-text') ?: "You are an assistant which answers questions based on knowledge which is provided to you. You provide accurate and concise answers. While answering, you don't use your internal knowledge, but solely the information in the uploaded files. You don't mention any reference of files in response.";
-        $temperature = (float)$module->getProjectSetting("temperature") ?: 0.5;
-        $max_num_results = (float)$module->getProjectSetting("max_num_results") ?: 4;
-        $score_threshold = (float)$module->getProjectSetting("score_threshold") ?: 0.8;
-        $max_output_tokens = (float)$module->getProjectSetting("max_output_tokens") ?: 4000;
+        $prependText = $module->getProjectSetting('request-prepend-text')[$num] ?: "You are an assistant which answers questions based on knowledge which is provided to you. You provide accurate and concise answers. While answering, you don't use your internal knowledge, but solely the information in the uploaded files. You don't mention any reference of files in response.";
+        $temperature = (float)$module->getProjectSetting("temperature")[$num] ?: 0.5;
+        $max_num_results = (float)$module->getProjectSetting("max_num_results")[$num] ?: 4;
+        $score_threshold = (float)$module->getProjectSetting("score_threshold")[$num] ?: 0.8;
+        $max_output_tokens = (float)$module->getProjectSetting("max_output_tokens")[$num] ?: 4000;
         $prompt = $prependText
             ."<br>Answer the question below:<br>"
             .$_POST['prompt_text'];
@@ -79,9 +90,9 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
             }
         }
 
-        if ($module->getProjectSetting('use-files-data') == true && empty($annotation_arr)) {
-            if ($module->getProjectSetting('custom-message') != '') {
-                $resText = $module->getProjectSetting('custom-message');
+        if ($module->getProjectSetting('use-files-data')[$num] == true && empty($annotation_arr)) {
+            if ($module->getProjectSetting('custom-message')[$num] != '') {
+                $resText = $module->getProjectSetting('custom-message')[$num];
             } else {
                 $resText = "Sorry, We are unable to provide any information based on this question.";
             }
@@ -94,23 +105,35 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
         $output = ['status' => 1, 'message'  => $resText];
     }
 } else if (isset($_POST['action']) && $_POST['action'] == 'upload_to_vs') {
-    $folder_id = $_POST['folder_id'];
-    $vsId = $module->vectorStoreIdforfolder($folder_id, $projectId);
-
-    if (is_null($vsId) || $vsId == '') {
-        $endpoint = $_POST['endpoint'];
-        $api_key = $_POST['api_key'];
-        $api_version = $_POST['api_version'];
-
-        $vsId = $module->uploadFilesToVectorStore($folder_id, $projectId, $endpoint, $api_key, $api_version);
-    } else {
-        /*$storedVSId = $module->vectorStoreIdforfolder($folderId, $projectId, false);
-        if ($storedVSId != $vsId) {
-
-        }*/
+    $formData = explode("&", $_POST['formData']);
+    foreach ($formData as $data) {
+        list($data1, $value) = explode("=", $data);
+        list($key, $index) = explode("____", $data1);
+        $dataArr[$key][$index] = $value;
     }
 
-    if (is_null($vsId))  $vsId = "";
+    $total = count($dataArr['settings']);
+    for ($i = 0; $i < $total; $i++) {
+        if ($dataArr['settings'][$i] == true) {
+            $folder_id = $dataArr['folder_id'][$i];
+            $vsId = $module->vectorStoreIdforfolder($folder_id, $projectId);
+
+            if (is_null($vsId) || $vsId == '') {
+                $endpoint = $dataArr['endpoint'][$i];
+                $api_key = $dataArr['api_key'][$i];
+                $api_version = $dataArr['api_version'][$i];
+
+                $vsId = $module->uploadFilesToVectorStore($folder_id, $projectId, $endpoint, $api_key, $api_version);
+            } else {
+                /*$storedVSId = $module->vectorStoreIdforfolder($folderId, $projectId, false);
+                if ($storedVSId != $vsId) {
+
+                }*/
+            }
+            if (is_null($vsId))  $vsId = "";
+        }
+    }
+
     $output = ['status' => 1, 'message'  => $vsId];
 } else if (isset($_GET['action']) && $_GET['action'] == 'get_files_info') {
     $folder_name = $module->getFolderName($folderId, $projectId);
@@ -176,14 +199,19 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
     }
     print "1"; exit;
 } else if (isset($_GET['action']) && $_GET['action'] == 'validate_em_setup') {
+
     $response = 1;
-    if (trim($folderId) == ''
-        || trim($api_key) == ''
-        || trim($endpoint) == ''
-        || trim($api_version) == '') {
-        $response = 0;
+    $count = count($api_keys);
+    for ($i = 0; $i < $count; $i++) {
+        if (trim($folderIds[$i]) == ''
+            || trim($api_keys[$i]) == ''
+            || trim($endpoints[$i]) == ''
+            || trim($api_versions[$i]) == '') {
+            $response = 0;
+            break;
+        }
     }
-    print $response; exit;
+    print $response."###".$count; exit;
 }
 
 print json_encode(($output));

@@ -1,0 +1,117 @@
+.rc-chatbot-container {
+	width: 100%;
+	background-color: #fff;
+	border-radius: 8px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+
+.rc-chatbot-header {
+	background-color: #4CAF50;
+	color: white;
+	padding: 5px;
+	text-align: center;
+	font-size: 12px;
+}
+
+.rc-chatbot-messages {
+	flex-grow: 1;
+	padding: 15px;
+	overflow-y: auto;
+	max-height: 400px; /* Adjust as needed */
+	border-bottom: 1px solid #eee;
+}
+
+.rc-message {
+	margin-bottom: 10px;
+	padding: 8px 12px;
+	border-radius: 15px;
+	max-width: 70%;
+	word-wrap: break-word;
+}
+
+.rc-user-message {
+	background-color: #e0e0e0;
+	align-self: flex-end;
+	margin-left: auto;
+}
+
+.rc-bot-message {
+	background-color: #dcf8c6;
+	align-self: flex-start;
+}
+
+.rc-chatbot-input {
+	display: flex;
+	padding: 15px;
+	border-top: 1px solid #eee;
+}
+
+.rc-chatbot-input textarea {
+	height: 55px;
+	width: 100%;
+	border: none;
+	outline: none;
+	resize: none;
+	max-height: 180px;
+	padding: 15px 15px 15px 0;
+	font-size: 0.95rem;
+}
+.rc-chatbot-input textarea:focus {
+	outline: none; /* Remove default outline */
+	border: 1px solid white; /* Add a custom border */
+	box-shadow: 0 0 5px white; /* Add a shadow */
+}
+
+/** Chat messages CSS **/
+.rc-chatbox {
+	overflow-y: auto;
+	height: 280px;
+	padding: 30px 20px 50px;
+}
+.rc-chatbox .chat {
+	display: flex;
+	list-style: none;
+	font-weight: normal;
+}
+.rc-chatbox .outgoing {
+	margin: 10px;
+	justify-content: flex-end;
+}
+.rc-chatbox .incoming span, .rc-chatbox .outgoing span {
+	width: 32px;
+	height: 32px;
+	color: #fff;
+	cursor: default;
+	text-align: center;
+	line-height: 32px;
+	align-self: flex-end;
+	background: #DB707E;
+	border-radius: 4px;
+	margin: 0 10px 7px 0;
+}
+.rc-chatbox .outgoing span {
+	margin: 0 0 7px 10px;
+}
+.rc-chatbox .chat p {
+	white-space: pre-wrap;
+	padding: 12px 16px;
+	border-radius: 10px 10px 0 10px;
+	max-width: 75%;
+	color: #000;
+	font-size: 0.95rem;
+	background: #E8EBFA;
+}
+.rc-chatbox .incoming p {
+	border-radius: 10px 10px 10px 0;
+}
+.rc-chatbox .chat p.error {
+	color: #721c24;
+	background: #f8d7da;
+}
+.rc-chatbox .incoming p {
+	color: #000;
+	background: #f2f2f2;
+}
