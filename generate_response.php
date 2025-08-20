@@ -115,13 +115,13 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
     $total = count($dataArr['settings']);
     for ($i = 0; $i < $total; $i++) {
         if ($dataArr['settings'][$i] == true) {
-            $folder_id = $dataArr['folder_id'][$i];
+            $folder_id = $dataArr['folder-id'][$i];
             $vsId = $module->vectorStoreIdforfolder($folder_id, $projectId);
 
             if (is_null($vsId) || $vsId == '') {
                 $endpoint = $dataArr['endpoint'][$i];
-                $api_key = $dataArr['api_key'][$i];
-                $api_version = $dataArr['api_version'][$i];
+                $api_key = $dataArr['api-key'][$i];
+                $api_version = $dataArr['api-version'][$i];
 
                 $vsId = $module->uploadFilesToVectorStore($folder_id, $projectId, $endpoint, $api_key, $api_version);
             } else {
