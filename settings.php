@@ -146,7 +146,6 @@ if (!empty($_POST['upload-files'])) {
         ];
 
         $resVS = Api::curlAPIPost($api_key, $endpoint . "vector_stores?api-version=" . $api_version, json_encode($data), $headers);
-        var_dump($resVS); die;
         $vsId = $resVS['id'];
 
         /*************** STEP 3: Add File to Vector Store *****************************/

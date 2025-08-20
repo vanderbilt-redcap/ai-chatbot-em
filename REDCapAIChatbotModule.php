@@ -271,7 +271,7 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
         /************ Step 1: Delete files attached to Vector Store via API call ************************************/
         $response = API::getCurlCall($api_key, $endpoint . "vector_stores/" . $vsId . "/files?api-version=". $api_version);
         $result = json_decode($response);
-        if (count($result->data) > 0) {
+        if (is_array($result->data) && count($result->data) > 0) {
             foreach ($result->data as $res) {
                 $fileId = $res->id;
                 $res = API::deleteCurlCall($api_key, $endpoint . "files/" . $fileId . "?api-version=".$api_version);

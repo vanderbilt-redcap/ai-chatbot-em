@@ -115,13 +115,13 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
     $total = count($dataArr['settings']);
     for ($i = 0; $i < $total; $i++) {
         if ($dataArr['settings'][$i] == true) {
-            $folder_id = $dataArr['folder_id'][$i];
+            $folder_id = $dataArr['folder-id'][$i];
             $vsId = $module->vectorStoreIdforfolder($folder_id, $projectId);
 
             if (is_null($vsId) || $vsId == '') {
-                $endpoint = $dataArr['endpoint'][$i];
-                $api_key = $dataArr['api_key'][$i];
-                $api_version = $dataArr['api_version'][$i];
+                $endpoint = urldecode($dataArr['endpoint'][$i]);
+                $api_key = $dataArr['api-key'][$i];
+                $api_version = $dataArr['api-version'][$i];
 
                 $vsId = $module->uploadFilesToVectorStore($folder_id, $projectId, $endpoint, $api_key, $api_version);
             } else {
@@ -142,7 +142,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
     $response = \Api::getCurlCall($api_key, $endpoint. "vector_stores/".$storedVSId."/files?api-version=".$api_version);
     $allFiles = json_decode($response);
 
-    if (count($allFiles->data) > 0) {
+    if (is_array($allFiles->data) && count($allFiles->data) > 0) {
         $data = '<div>';
         $data = '<ul>';
         $data .= '<li style="font-size: 10px; color: #666">Below files (<b>fetched from vector store</b>) will be<br> utilized to answer questions.</li>';

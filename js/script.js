@@ -84,7 +84,7 @@ $( document ).ready(function() {
     $('#setting-sel').change(function () {
         var loadingText = '<div id="loading-div" style="margin-left: 10px; float: left;"><img alt="Loading Setting..." src="' + app_path_images + 'progress_circle.gif">&nbsp; Loading Setting...</div>';
         $(this).parent().after(loadingText);
-        setTimeout(function() { $("#loading-div").remove(); }, 4000);
+        setTimeout(function() { $("#loading-div").remove(); }, 2000);
     });
     chatInput.on( "keydown", function(e) {
         var start = new Date();
