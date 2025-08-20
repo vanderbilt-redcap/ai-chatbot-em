@@ -119,7 +119,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
             $vsId = $module->vectorStoreIdforfolder($folder_id, $projectId);
 
             if (is_null($vsId) || $vsId == '') {
-                $endpoint = $dataArr['endpoint'][$i];
+                $endpoint = urldecode($dataArr['endpoint'][$i]);
                 $api_key = $dataArr['api-key'][$i];
                 $api_version = $dataArr['api-version'][$i];
 
