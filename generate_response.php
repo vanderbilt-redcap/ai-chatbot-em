@@ -6,6 +6,7 @@ $output = ['status' => 0, 'message'   => ''];
 $projectId = $module->getProjectId();
 
 $settings = $module->getProjectSetting('settings');
+$settingTitles = $module->getProjectSetting('setting-name');
 $api_keys = $module->getProjectSetting('api-key');
 $endpoints = $module->getProjectSetting('endpoint');
 $api_versions = $module->getProjectSetting('api-version');
@@ -202,6 +203,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
 
     $response = 1;
     $count = count($api_keys);
+    $setting_titles = [];
     for ($i = 0; $i < $count; $i++) {
         if (trim($folderIds[$i]) == ''
             || trim($api_keys[$i]) == ''
@@ -210,8 +212,9 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
             $response = 0;
             break;
         }
+        $setting_titles[] = $settingTitles[$i];
     }
-    print $response."###".$count; exit;
+    print $response."###".$count."###".json_encode($setting_titles); exit;
 }
 
 print json_encode(($output));
