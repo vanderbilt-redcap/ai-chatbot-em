@@ -5,7 +5,8 @@ Prototype module for REDCap-RAG (Retrieval Augmented Generation) AI Integration.
 
 ### Project-Level Settings
 * **REDCap Folder:** This must be set for the purpose of external source to utilize to generate response. OpenAI API will generate response based on uploaded file(s) inside selected REDCap folder. <br/>Steps to create a REDCap folder: In left panel, Go to "Applications -> File Repository", Click "Create Folder" button, create a folder. Go to folder and upload one or more documents inside a folder.
-* **OpenAI Crediential:** A valid Credientials from your Azure OpenAI instance. 
+* **REDCap Field (Optional):** REDCap descriptive field(s) per setting. The respective REDCap AI Chat bot will be appended to those descriptive fields label on Data entry forms and Survey page.
+* **OpenAI Crediential:** A valid credential from your Azure OpenAI instance. 
   * **OpenAI API Key**
   * **OpenAI Endpoint URL**
   * **API Model Version**
@@ -19,4 +20,4 @@ Prototype module for REDCap-RAG (Retrieval Augmented Generation) AI Integration.
   * **Max Output Tokens** Default: 4000, An upper bound for the number of tokens that can be generated for a response, including visible output tokens and reasoning tokens.
 
 ### Usage
-After downloading and enabling this module on your REDCap instance. User can enable this module for any project and configure settings at project-level. An chatbot icon will appear at the right bottom of each page inside a project. Clicking this icon, user can interact with AI by entering question and will get response based uploaded files inside REDCap folder selected at configuration.
+After downloading and enabling this module on your REDCap instance. User can enable this module for any project and configure settings at project-level. A chatbot icon will appear at the right bottom of each page inside a project. Clicking this icon, user can interact with AI by entering question and will get response based uploaded files inside REDCap folder selected at configuration.

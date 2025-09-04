@@ -33,6 +33,27 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
             <?php
             include "ai_chat/index.html";
         }
+        // Insert chatbot on data entry forms or survey page
+        if (PAGE == 'DataEntry/index.php' || PAGE == 'surveys/index.php') {
+            $this->appendChatBotToFields();
+        }
+    }
+
+
+    public function appendChatBotToFields() {
+        $settings = $this->getProjectSetting('settings');
+        $fields = $this->getProjectSetting('redcap-field');
+        foreach ($settings as $num => $setting) {
+            if ($setting == true) {
+                if (is_array($fields[$num]) && !empty($fields[$num])) {
+                    foreach ($fields[$num] as $field) {
+                        ?>
+                        <script type="text/javascript">$(function(){ setTimeout(function(){ insertChatBot("<?=$field?>", "<?=($num+1)?>") },500); });</script>
+                        <?php
+                    }
+                }
+            }
+        }
     }
 
     /**
