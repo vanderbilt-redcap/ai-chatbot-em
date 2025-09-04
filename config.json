@@ -29,7 +29,7 @@
                 {
                     "key": "redcap-field",
                     "repeatable": true,
-                    "name": "REDCap Field<br/><span style='font-size:11px; color:#800000;'>REDCap descriptive fields after which REDCap AI Chatbot suppose to appear on DAta entry and Survey page</span>",
+                    "name": "REDCap Field (Optional)<br/><span style='font-size:11px; color:#800000;'>REDCap descriptive fields after which REDCap AI Chatbot suppose to appear on Data entry and Survey page</span>",
                     "type": "field-list",
                     "field-type": "descriptive"
                 },
