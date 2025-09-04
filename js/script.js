@@ -271,33 +271,34 @@ function getSettingNumParam() {
 }
 
 function insertChatBot(name, setupNum) {
-    // Utilize first setup by default
-    if (setupNum == undefined || setupNum == '') setupNum = 1;
+    if ($('tr#'+name+'-tr').length > 0) { // Execute this script only if form contain that field
+        // Utilize first setup by default
+        if (setupNum == undefined || setupNum == '') setupNum = 1;
 
-    $('head').append('<link rel="stylesheet" type="text/css" href="'+rc_chatbot_css_url+'">');
+        $('head').append('<link rel="stylesheet" type="text/css" href="'+rc_chatbot_css_url+'">');
 
-    var html = "<div style='margin-top: 10px;' class=\"rc-chatbot-container\">\n" +
-        "  <div class=\"rc-chatbot-header\">\n" +
-        "    REDCap Chatbot\n" +
-        "  </div>\n" +
-        "  <ul class=\"rc-chatbox\">\n" +
-        "        <li class=\"chat incoming\">\n" +
-        "            <span><i class=\"fas fa-robot\"></i></span>\n" +
-        "            <p>Hi there <br>How can I help you today?</p>\n" +
-        "        </li>\n" +
-        "    </ul>\n" +
-        "  <div class=\"rc-chatbot-input\">\n" +
-        "    <textarea id=\"rc-user-input\" class=\"rc-question-area\" placeholder=\"Enter a question...\"></textarea>\n" +
-        "    <span style='vertical-align: middle; padding:15px 15px 15px 0; color: #888;' onclick=\"askQuestion('"+name+"', "+setupNum+")\"><i class=\"fas fa-arrow-alt-circle-up fa-2xl\"></i></span>\n" +
-        "  </div>\n" +
-        "</div>";
+        var html = "<div style='margin-top: 10px;' class=\"rc-chatbot-container\">\n" +
+            "  <div class=\"rc-chatbot-header\">\n" +
+            "    REDCap Chatbot\n" +
+            "  </div>\n" +
+            "  <ul class=\"rc-chatbox\">\n" +
+            "        <li class=\"chat incoming\">\n" +
+            "            <span><i class=\"fas fa-robot\"></i></span>\n" +
+            "            <p>Hi there <br>How can I help you today?</p>\n" +
+            "        </li>\n" +
+            "    </ul>\n" +
+            "  <div class=\"rc-chatbot-input\">\n" +
+            "    <textarea id=\"rc-user-input\" class=\"rc-question-area\" placeholder=\"Enter a question...\"></textarea>\n" +
+            "    <span style='vertical-align: middle; padding:15px 15px 15px 0; color: #888;' onclick=\"askQuestion('"+name+"', "+setupNum+")\"><i class=\"fas fa-arrow-alt-circle-up fa-2xl\"></i></span>\n" +
+            "  </div>\n" +
+            "</div>";
 
-    if ($('tr#'+name+'-tr').find('td:first-child div:first').length > 0) {
-        $('tr#'+name+'-tr').find('td:first-child div:first').append(html);
-    } else {
-        $('tr#'+name+'-tr').find('td:nth-child(2) div:first').append(html);
+        if ($('tr#'+name+'-tr').find('td:first-child div:first').length > 0) {
+            $('tr#'+name+'-tr').find('td:first-child div:first').append(html);
+        } else {
+            $('tr#'+name+'-tr').find('td:nth-child(2) div:first').append(html);
+        }
     }
-
 }
 function askQuestion(name, setupNum) {
     handleChat($('tr#'+name+'-tr').find("#rc-user-input"), $('tr#'+name+'-tr').find(".rc-chatbox"), setupNum);
