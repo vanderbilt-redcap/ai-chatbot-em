@@ -48,7 +48,9 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
                 if (is_array($fields[$num]) && !empty($fields[$num])) {
                     foreach ($fields[$num] as $field) {
                         ?>
-                        <script type="text/javascript">$(function(){ setTimeout(function(){ insertChatBot("<?=$field?>", "<?=($num+1)?>") },500); });</script>
+                        <script type="text/javascript">
+                            var settingTitles = <?php echo json_encode($this->getProjectSetting('setting-name')); ?>;
+                            $(function(){ setTimeout(function(){ insertChatBot("<?=$field?>", "<?=($num+1)?>") },500); });</script>
                         <?php
                     }
                 }

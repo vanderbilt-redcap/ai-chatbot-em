@@ -22,6 +22,11 @@
             "repeatable": true,
             "sub_settings": [
                 {
+                    "key": "setting-name",
+                    "name": "Setting Title",
+                    "type": "text"
+                },
+                {
                     "key": "folder-id",
                     "name": "REDCap Folder<br/><span style='font-size:11px; color:#800000;'>(External source) to utilize to generate response</span>",
                     "type": "folder-list"

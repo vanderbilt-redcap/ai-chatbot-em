@@ -9,8 +9,8 @@
 }
 
 .rc-chatbot-header {
-	background-color: #4CAF50;
-	color: white;
+	background-color: #ccc;
+	color: black;
 	padding: 5px;
 	text-align: center;
 	font-size: 12px;
@@ -101,7 +101,7 @@
 	border-radius: 10px 10px 0 10px;
 	max-width: 75%;
 	color: #000;
-	font-size: 0.95rem;
+	font-size: 14px;
 	background: #E8EBFA;
 }
 .rc-chatbox .incoming p {

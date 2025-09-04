@@ -62,11 +62,17 @@ $( document ).ready(function() {
                 if (arr[0] == 1) {
                     document.body.classList.toggle("show-chatbot");
                     var count = arr[1];
+                    var settingTitles = JSON.parse(arr[2]);
                     if (count > 1) {
                         if ($(".div-settings").is(":hidden")) {
                             for (let i = 0; i < count; i++) {
                                 // Append a new option with value (i+1) and text "Setting (i+1)"
-                                $('#setting-sel').append('<option value="'+(i+1)+'">Setting '+ (i+1) +'</option>');
+                                var name = 'Setting ' + (i+1);
+                                if (settingTitles[i] != '' && settingTitles[i] != null) {
+                                    name = settingTitles[i];
+                                }
+
+                                $('#setting-sel').append('<option value="'+(i+1)+'"> '+ name +'</option>');
                                 $('.div-settings').show();
                             }
                         }
@@ -274,12 +280,15 @@ function insertChatBot(name, setupNum) {
     if ($('tr#'+name+'-tr').length > 0) { // Execute this script only if form contain that field
         // Utilize first setup by default
         if (setupNum == undefined || setupNum == '') setupNum = 1;
-
+        var settingTitle = 'REDCap Chatbot';
+        if (settingTitles[setupNum-1] != '' && settingTitles[setupNum-1] != null) {
+            settingTitle = settingTitles[setupNum-1];
+        }
         $('head').append('<link rel="stylesheet" type="text/css" href="'+rc_chatbot_css_url+'">');
 
         var html = "<div style='margin-top: 10px;' class=\"rc-chatbot-container\">\n" +
             "  <div class=\"rc-chatbot-header\">\n" +
-            "    REDCap Chatbot\n" +
+            settingTitle+"\n" +
             "  </div>\n" +
             "  <ul class=\"rc-chatbox\">\n" +
             "        <li class=\"chat incoming\">\n" +
