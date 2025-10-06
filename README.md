@@ -6,10 +6,6 @@ Prototype module for REDCap-RAG (Retrieval Augmented Generation) AI Integration.
 ### Project-Level Settings
 * **REDCap Folder:** This must be set for the purpose of external source to utilize to generate response. OpenAI API will generate response based on uploaded file(s) inside selected REDCap folder. <br/>Steps to create a REDCap folder: In left panel, Go to "Applications -> File Repository", Click "Create Folder" button, create a folder. Go to folder and upload one or more documents inside a folder.
 * **REDCap Field (Optional):** REDCap descriptive field(s) per setting. The respective REDCap AI Chat bot will be appended to those descriptive fields label on Data entry forms and Survey page.
-* **OpenAI Crediential:** A valid credential from your Azure OpenAI instance. 
-  * **OpenAI API Key**
-  * **OpenAI Endpoint URL**
-  * **API Model Version**
 * **Text to prepend to a question (Optional):** Example: "Reformulate the response as a single paragraph."
 * **Refer strictly to the uploaded file to provide response::** When checked, response will be fetched from uploaded files only. If information regarding question not present inside files, It will print custom message if set or default message. If not checked, response will be fetched from other external sources and not restricted to uploaded files.
 * **Custom message to display in response if answer is not a part of any files:** To utilize this text, it is recommended to keep above checkbox checked. If empty, it will default to "Sorry, We are unable to provide any information based on this question."
