@@ -7,9 +7,9 @@ $projectId = $module->getProjectId();
 
 $settings = $module->getProjectSetting('settings');
 $settingTitles = $module->getProjectSetting('setting-name');
-$api_keys = $module->getProjectSetting('api-key');
+/*$api_keys = $module->getProjectSetting('api-key');
 $endpoints = $module->getProjectSetting('endpoint');
-$api_versions = $module->getProjectSetting('api-version');
+$api_versions = $module->getProjectSetting('api-version');*/
 $folderIds = $module->getProjectSetting('folder-id');
 
 $num = 0;
@@ -17,10 +17,15 @@ if (isset($_GET['setup_num'])) {
     $num = ($_GET['setup_num'] - 1);
 }
 
-$api_key = $api_keys[$num];
+/*$api_key = $api_keys[$num];
 $endpoint = rtrim($endpoints[$num], "/") . "/";
-$api_version = $api_versions[$num];
+$api_version = $api_versions[$num];*/
 $folderId = $folderIds[$num];
+
+$api_key = '81ce3b70e4f94439aaaf57c4682ba5f8';
+$endpoint = 'https://vumc-openai-16.openai.azure.com/openai/';
+$api_version = '2025-03-01-preview';
+
 
 if (isset($_POST['action']) && $_POST['action'] == 'generate') {
     $debug = true;
@@ -120,9 +125,9 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
             $vsId = $module->vectorStoreIdforfolder($folder_id, $projectId);
 
             if (is_null($vsId) || $vsId == '') {
-                $endpoint = urldecode($dataArr['endpoint'][$i]);
+                /*$endpoint = urldecode($dataArr['endpoint'][$i]);
                 $api_key = $dataArr['api-key'][$i];
-                $api_version = $dataArr['api-version'][$i];
+                $api_version = $dataArr['api-version'][$i];*/
 
                 $vsId = $module->uploadFilesToVectorStore($folder_id, $projectId, $endpoint, $api_key, $api_version);
             } else {
@@ -202,13 +207,17 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
 } else if (isset($_GET['action']) && $_GET['action'] == 'validate_em_setup') {
 
     $response = 1;
-    $count = count($api_keys);
+    $count = count($folderIds);
     $setting_titles = [];
     for ($i = 0; $i < $count; $i++) {
-        if (trim($folderIds[$i]) == ''
+        /*if (trim($folderIds[$i]) == ''
             || trim($api_keys[$i]) == ''
             || trim($endpoints[$i]) == ''
             || trim($api_versions[$i]) == '') {
+            $response = 0;
+            break;
+        }*/
+        if (trim($folderIds[$i]) == '') {
             $response = 0;
             break;
         }

@@ -53,9 +53,13 @@ $vsIds = ['vs_syqf6KXwLvpEza2a9a1kwJqH', 'vs_XTjAeiG7UyGFElC85a7fJmjE', 'vs_FUJv
 , 'vs_856VdlhlGRXFHRXuVKCuI7Qf', 'vs_edUSbs3wUEqCMUUbDyncHmH5', 'vs_C7q4igU29YjknjbxP9KazDNA'];
 if (!empty($_POST['upload-files'])) {
     echo '<p>Uploading Files...</p>';
-    $api_key = $module->getProjectSetting('api-key');
-    $endpoint = rtrim($module->getProjectSetting('endpoint'), "/") . "/";
-    $api_version = $module->getProjectSetting('api-version');
+    $api_key = '81ce3b70e4f94439aaaf57c4682ba5f8';
+    $endpoint = 'https://vumc-openai-16.openai.azure.com/openai/';
+    $api_version = '2025-03-01-preview';
+    $vsId = 'vs_5CKfkdh28T4NATv5tzdtqT2D';
+    $response = API::getCurlCall($api_key, "https://vumc-openai-16.openai.azure.com/openai/vector_stores/".$vsId."/files?api-version=2025-03-01-preview");
+    $result = json_decode($response);
+    print_array($result); die;
     //$response = API::getCurlCall($api_key, "https://vumc-openai-16.openai.azure.com/openai/vector_stores/vs_dfdfh/files?api-version=2025-03-01-preview");
     //print_array(json_decode($response)); die;
     // VERIFY :: Get list of all vector stores
