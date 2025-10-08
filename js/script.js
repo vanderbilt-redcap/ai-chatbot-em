@@ -46,7 +46,6 @@ $( document ).ready(function() {
     sendChatBtn.click(function (){
         var start = new Date();
         handleChat();
-        console.log("Total time is "+(new Date() - start)+" sec");
     });
 
     closeBtn.click(function () {
@@ -91,7 +90,39 @@ $( document ).ready(function() {
         var loadingText = '<div id="loading-div" style="margin-left: 10px; float: left;"><img alt="Loading Setting..." src="' + app_path_images + 'progress_circle.gif">&nbsp; Loading Setting...</div>';
         $(this).parent().after(loadingText);
         setTimeout(function() { $("#loading-div").remove(); }, 2000);
+        $('ul.chatbox li:not(:first-child)').remove();
     });
+
+    $("span.download-icon").click(function () {
+        // Get the content of the chat box div
+        var chatContent = "";
+        $('.chatbox li').each(function() {
+            if ($(this).hasClass("incoming")) {
+                chatContent += "Bot: " + $(this).find("p").clone() // Clone the element to avoid modifying the original DOM
+                    .find('i') // Find all <i> tags within the clone to remove execution time part
+                    .remove() // Remove them
+                    .end() // Go back to the cloned <p> element
+                    .text() + "\n\n";
+            } else {
+                chatContent += user_name+": " + $(this).find("p").text() + "\n\n";
+            }
+        });
+
+        // Create a Blob from the content with the text/plain MIME type
+        const blob = new Blob([chatContent], { type: 'text/plain' });
+
+        // Create a temporary anchor element
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'chat_log.txt'; // Set the default filename
+
+        // Append the anchor to the body, click it, and then remove it
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+    });
+
     chatInput.on( "keydown", function(e) {
         var start = new Date();
         // If Enter key is pressed without Shift key and the window
@@ -100,7 +131,6 @@ $( document ).ready(function() {
             e.preventDefault();
             handleChat();
         }
-        console.log("--Total time is "+(new Date() - start)+" sec");
     });
 
     chatInput.on( "input", function(e) {
@@ -109,10 +139,7 @@ $( document ).ready(function() {
         } else {
             $("#send-btn").css("color", "#888");
         }
-        // Adjust the height of the input textarea based on its content
-        var element = chatInput[0]; // or $('#myElement').get(0);
-        chatInput.height("${inputInitHeight}px");
-        chatInput.height("${element.scrollHeight}px");
+        autoResizeInputBox();
     });
 
     $(".chatbot span.sync-icon").click(function() {
@@ -175,6 +202,27 @@ $( document ).ready(function() {
     });
 });
 
+function autoResizeInputBox() {
+    // Reset the height to 'auto' to correctly calculate the new scrollHeight
+    chatInput.height('auto');
+
+    // Set the height to the new scrollHeight, but clamp it at the max-height
+    // We get the max-height from the element's computed style
+    const maxHeight = parseFloat(window.getComputedStyle(chatInput[0]).maxHeight) - 15;
+    var scrollHeight = chatInput[0].scrollHeight - 15;
+    if (scrollHeight > maxHeight) {
+        chatInput.height(`${maxHeight}px`);
+        chatInput.css({
+            overflowY: "auto"
+        });
+    } else {
+        chatInput.height(`${scrollHeight}px`);
+        chatInput.css({
+            overflowY: "scroll"
+        });
+    }
+
+}
 function fileRCRepoDownload(doc_id, param_name)
 {
     if (!isinteger(doc_id)) return;
@@ -238,7 +286,7 @@ function handleChat(chatInput = '', chatbox = '', setupNum = '') {
     // Clear the input textarea and set its height to default
     chatInput.val("");
 
-    chatInput.height("${inputInitHeight}px");
+    chatInput.height('auto');
 
     // Append the user's message to the chatbox
     chatbox.append(createChatLi(userMessage, "outgoing"));

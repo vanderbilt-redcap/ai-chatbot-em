@@ -73,8 +73,11 @@ body.show-chatbot .chatbot {
 .chatbot header span.sync-icon {
 	right: 65px;
 }
-.chatbot header span.status-msg {
+.chatbot header span.download-icon {
 	right: 125px;
+}
+.chatbot header span.status-msg {
+	right: 155px;
 }
 .chatbot .chatbox {
 	overflow-y: auto;
@@ -146,6 +149,9 @@ body.show-chatbot .chatbot {
 	border-top: 1px solid #ddd;
 }
 .chat-input textarea {
+	flex-grow: 1;
+	overflow-y: scroll; /* Hides the scrollbar by default */
+	box-sizing: border-box;
 	height: 55px;
 	width: 100%;
 	border: none;

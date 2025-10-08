@@ -44,6 +44,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
         $score_threshold = (float)$module->getProjectSetting("score_threshold")[$num] ?: 0.8;
         $max_output_tokens = (float)$module->getProjectSetting("max_output_tokens")[$num] ?: 4000;
         $prompt = $prependText
+            ."<br>Reformulate the response as plain text only. Do not use Markdown, bolding, italics, or headings."
             ."<br>Answer the question below:<br>"
             .$_POST['prompt_text'];
         //echo $prompt; die;
