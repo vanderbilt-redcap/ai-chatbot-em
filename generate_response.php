@@ -206,7 +206,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
     }
     print "1"; exit;
 } else if (isset($_GET['action']) && $_GET['action'] == 'validate_em_setup') {
-
+    if (is_null($folderIds))  return 0;
     $response = 1;
     $count = count($folderIds);
     $setting_titles = [];
