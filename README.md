@@ -17,3 +17,7 @@ Prototype module for REDCap-RAG (Retrieval Augmented Generation) AI Integration.
 
 ### Usage
 After downloading and enabling this module on your REDCap instance. User can enable this module for any project and configure settings at project-level. A chatbot icon will appear at the right bottom of each page inside a project. Clicking this icon, user can interact with AI by entering question and will get response based uploaded files inside REDCap folder selected at configuration.
+
+### Troubleshooting Tips
+* Changes made to files (uploads or removals) in a configured **REDCap folder** via the "File Repository" module **will not automatically sync** with the vector store used by the chatbot. To update the chatbot's knowledge base, you must explicitly click the **"Sync" button** in the chatbot's header for that specific setting.
+* Click the **"View List" icon** in the chatbot header to check which files are currently being used. If the resulting file list is different from the actual contents of your REDCap folder, you need to click the **"Sync" button**. Once the sync is complete, use the "View List" icon one more time to confirm the update.
