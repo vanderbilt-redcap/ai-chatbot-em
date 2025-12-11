@@ -38,12 +38,17 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
 
         /*************** STEP 4: Responses API *****************************/
 
-        $prependText = $module->getProjectSetting('request-prepend-text')[$num] ?: "You are an assistant which answers questions based on knowledge which is provided to you. You provide accurate and concise answers. While answering, you don't use your internal knowledge, but solely the information in the uploaded files. You don't mention any reference of files in response.";
+        $systemPrompt = "You are an AI assistant that answers questions strictly based on the provided documents in the vector store. Do not use any external or general knowledge. If the answer is not in the documents, state you cannot find the information in the provided context. You don't mention any reference of files in response.";
+
+        $prependText = $module->getProjectSetting('request-prepend-text')[$num] ?: "";
         $temperature = (float)$module->getProjectSetting("temperature")[$num] ?: 0.5;
         $max_num_results = (float)$module->getProjectSetting("max_num_results")[$num] ?: 4;
         $score_threshold = (float)$module->getProjectSetting("score_threshold")[$num] ?: 0.8;
         $max_output_tokens = (float)$module->getProjectSetting("max_output_tokens")[$num] ?: 4000;
-        $prompt = $prependText
+
+        if (!empty($prependText))  $prependText = '<br>'.$prependText;
+
+        $prompt = $systemPrompt.$prependText
             ."<br>Reformulate the response as plain text only. Do not use Markdown, bolding, italics, or headings."
             ."<br>Answer the question below:<br>"
             .$_POST['prompt_text'];
@@ -80,9 +85,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
         if (is_array($response) && isset($response['output'])) {
             $_SESSION['prev_response_id'] = $response['id'];
             // Insert into log table to log question and response received
-            $sql = "INSERT INTO redcap_ai_chatbot_log (project_id, folder_id, vs_id, question, response, created_at)
-			            VALUES ('".$projectId."', '".$folderId."', '".$vsId."', '".db_escape($prompt)."', '".json_encode($response)."', '".NOW."')";
-            db_query($sql);
             foreach ($response['output'] as $output) {
                 if (isset($output['content'])) {
                     foreach ($output['content'] as $content) {
@@ -104,12 +106,27 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
                 $resText = "Sorry, We are unable to provide any information based on this question.";
             }
         }
+        $userResText = $resText;
         $end_time = microtime(true);
         $execution_time = ($end_time - $start_time);
+        $executionInfoText = '';
         if ($debug == true) {
-            $resText .= "<br><i style='font-size: 11px; color: #666;'>Execution time: ".number_format($execution_time, 2, '.', '')." sec</i>";
+            $executionInfoText = "<i style='font-size: 11px; color: #666;'>Execution time: ".number_format($execution_time, 2, '.', '')." sec</i>";
         }
-        $output = ['status' => 1, 'message'  => $resText];
+
+        $sql = "INSERT INTO redcap_ai_chatbot_log (project_id, username, folder_id, vs_id, question, response, user_response, execution_time, session_id, created_at)
+			            VALUES ('".$projectId."', '".USERID."', '".$folderId."', '".$vsId."', '".db_escape($prompt)."', '".json_encode($response)."', '".db_escape($userResText)."', '".$execution_time."', '".session_id()."', '".NOW."')";
+        db_query($sql);
+
+        $resultText = "<div class='table-container'>
+                        <div class='table-row' style='float: right; font-size: 11px;'>
+                            <button class='btn btn-xs btn-copy-clipboard' title='Copy to clipboard' style='padding:3px 8px 3px 6px; font-size: 11px; color: #666;'>
+                                <i class='fas fa-copy'></i> Copy</button>
+                        </div>
+                        <div class='table-row result-text'>".nl2br($resText)."</div>
+                        <div class='table-row'>".$executionInfoText."</div>
+                    </div>";
+        $output = ['status' => 1, 'message'  => $resultText];
     }
 } else if (isset($_POST['action']) && $_POST['action'] == 'upload_to_vs') {
     $formData = explode("&", $_POST['formData']);
