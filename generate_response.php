@@ -41,8 +41,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
         $strictText = $module->getProjectSetting('use-files-data')[$num] == true ? "Do not use any external or general knowledge." : "";
         $systemPrompt = "You are an assistant which answers questions strictly based on knowledge which is provided documents in the vector store. You provide accurate and concise answers. ".$strictText." You don't mention any reference of files in response.";
 
-
-
         $prependText = $module->getProjectSetting('request-prepend-text')[$num] ?: "You are an assistant which answers questions based on knowledge which is provided to you. You provide accurate and concise answers. While answering, you don't use your internal knowledge, but solely the information in the uploaded files. You don't mention any reference of files in response.";
 
         $temperature = (float)$module->getProjectSetting("temperature")[$num] ?: 0.5;
@@ -50,7 +48,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
         $score_threshold = (float)$module->getProjectSetting("score_threshold")[$num] ?: 0.8;
         $max_output_tokens = (float)$module->getProjectSetting("max_output_tokens")[$num] ?: 4000;
 
-        if (!empty($prependText))  $prependText = '<br>'.$prependText;
+        //if (!empty($prependText))  $prependText = '<br>'.$prependText;
         $systemPrompt = "";
         $prompt = $systemPrompt.$prependText
             ."<br>Reformulate the response as plain text only. Do not use Markdown, bolding, italics, or headings."
