@@ -37,8 +37,11 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
         }
 
         /*************** STEP 4: Responses API *****************************/
+        //$systemPrompt = "You are an AI assistant that answers questions strictly based on the provided documents in the vector store. Do not use any external or general knowledge. If the answer is not in the documents, state you cannot find the information in the provided context. You don't mention any reference of files in response.";
+        $strictText = $module->getProjectSetting('use-files-data')[$num] == true ? "Do not use any external or general knowledge." : "";
+        $systemPrompt = "You are an assistant which answers questions strictly based on knowledge which is provided documents in the vector store. You provide accurate and concise answers. ".$strictText." You don't mention any reference of files in response.";
 
-        $systemPrompt = "You are an AI assistant that answers questions strictly based on the provided documents in the vector store. Do not use any external or general knowledge. If the answer is not in the documents, state you cannot find the information in the provided context. You don't mention any reference of files in response.";
+
 
         $prependText = $module->getProjectSetting('request-prepend-text')[$num] ?: "";
         $temperature = (float)$module->getProjectSetting("temperature")[$num] ?: 0.5;
