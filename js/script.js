@@ -98,13 +98,20 @@ $( document ).ready(function() {
         var chatContent = "";
         $('.chatbox li').each(function() {
             if ($(this).hasClass("incoming")) {
-                chatContent += "Bot: " + $(this).find("p").clone() // Clone the element to avoid modifying the original DOM
+                var botText = '';
+                console.log($(this).find("div > div.result-text").length);
+                if ($(this).find("div > div.result-text").length > 0) {
+                    botText = $(this).find("div > div.result-text").clone();
+                } else {
+                    botText = $(this).find("div").clone();
+                }
+                chatContent += "Bot: " + botText // Clone the element to avoid modifying the original DOM
                     .find('i') // Find all <i> tags within the clone to remove execution time part
                     .remove() // Remove them
-                    .end() // Go back to the cloned <p> element
+                    .end() // Go back to the cloned <div> element
                     .text() + "\n\n";
             } else {
-                chatContent += user_name+": " + $(this).find("p").text() + "\n\n";
+                chatContent += user_name+": " + $(this).find("div").text() + "\n\n";
             }
         });
 
@@ -200,7 +207,44 @@ $( document ).ready(function() {
             $(this).next('span').css("color", "#888");
         }
     });
+
+    // Copy-to-clipboard action
+    $(document).on("click", ".btn-copy-clipboard" , function(){
+        copyResponseToClipboard($(this));
+    });
 });
+
+function copyResponseToClipboard(ob) {
+    var element = ob.parent().next('div.result-text');
+    var $temp = $("<textarea>");
+    $("body").append($temp);
+    $temp.val(element.text().trim()).select();
+    document.execCommand("copy");
+    $temp.remove();
+
+    element.animate({
+        backgroundColor: '#F6EABA'
+    }, 1000, function() { // Callback after highlight animation completes
+        setTimeout(() => {
+            element.animate({
+                backgroundColor: 'transparent'
+            }, 1000);
+        }, 1000);
+    });
+
+    // Create progress element that says "Copied!" when clicked
+    var rndm = Math.random()+"";
+    var copyid = 'clip'+rndm.replace('.','');
+    $('.clipboardSaveProgress').remove();
+    var clipSaveHtml = '<span class="clipboardSaveProgress" style="font-size: 11px;" id="'+copyid+'"><i class="fas fa-check"></i></span>';
+    ob.before(clipSaveHtml);
+    $('#'+copyid).toggle('fade','fast');
+    setTimeout(function(){
+        $('#'+copyid).toggle('fade','fast',function(){
+            $('#'+copyid).remove();
+        });
+    },2000);
+}
 
 function autoResizeInputBox() {
     // Reset the height to 'auto' to correctly calculate the new scrollHeight
@@ -234,9 +278,9 @@ function createChatLi(message, className) {
     // Create a chat <li> element with passed message and className
     const chatLi = document.createElement("li");
     chatLi.classList.add("chat", `${className}`);
-    let chatContent = className === "outgoing" ? `<p></p><span><i class="fas fa-user"></i></span>` : `<span><i class="fas fa-robot"></i></span><p></p>`;
+    let chatContent = className === "outgoing" ? `<div></div><span><i class="fas fa-user"></i></span>` : `<span><i class="fas fa-robot"></i></span><div></div>`;
     chatLi.innerHTML = chatContent;
-    chatLi.querySelector("p").innerHTML = message;
+    chatLi.querySelector("div").innerHTML = message;
     return chatLi; // return chat <li> element
 }
 
@@ -259,7 +303,7 @@ function generateResponse(chatElement, setupNum) {
             alert(data.error.message);
         } else {
             //typeWriterEffect(chatElement.querySelector("p"), data.message, 5); // Type into 'myDiv' with 50ms delay per character
-            chatElement.querySelector("p").innerHTML = data.message;
+            chatElement.querySelector("div").innerHTML = data.message;
         }
     })
     .fail(function(data) {
