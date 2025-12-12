@@ -47,19 +47,20 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
             $messageText = "Sorry, We are unable to provide any information based on this question.";
         }
 
+        $prependText = $module->getProjectSetting('request-prepend-text')[$num];
         if ($module->getProjectSetting('use-files-data')[$num] == true) { // "Refer strictly to the uploaded file to provide response" is checked
-            $prependText = "You are an AI assistant that answers questions strictly based on the provided documents in the vector store. Do not use any external or general knowledge. If the answer is not in the documents, print '".$messageText."'. You don't mention any reference of files in response.";
+            $systemPrompt = "You are an AI assistant that answers questions strictly based on the provided documents in the vector store. Do not use any external or general knowledge. If the answer is not in the documents, print '".$messageText."'. You don't mention any reference of files in response.";
         } else {
-            $prependText = $module->getProjectSetting('request-prepend-text')[$num] ?: "You are an assistant which answers questions based on knowledge which is provided to you. You provide accurate and concise answers. While answering, you don't use your internal knowledge, but solely the information in the uploaded files. You don't mention any reference of files in response.";
+            $systemPrompt = "You are an assistant which answers questions based on knowledge which is provided to you. You provide accurate and concise answers. While answering, you don't use your internal knowledge, but solely the information in the uploaded files. You don't mention any reference of files in response.";
         }
+
 
         $temperature = (float)$module->getProjectSetting("temperature")[$num] ?: 0.5;
         $max_num_results = (float)$module->getProjectSetting("max_num_results")[$num] ?: 4;
         $score_threshold = (float)$module->getProjectSetting("score_threshold")[$num] ?: 0.8;
         $max_output_tokens = (float)$module->getProjectSetting("max_output_tokens")[$num] ?: 4000;
         $resText = "";
-        //if (!empty($prependText))  $prependText = '<br>'.$prependText;
-        $systemPrompt = "";
+        if (!empty($prependText))  $prependText = '<br>'.$prependText;
         $prompt = $systemPrompt.$prependText
             ."<br>Reformulate the response as plain text only. Do not use Markdown, bolding, italics, or headings."
             ."<br>Answer the question below:<br>"
