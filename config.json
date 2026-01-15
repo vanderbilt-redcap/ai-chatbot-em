@@ -39,11 +39,18 @@
                     "field-type": "descriptive"
                 },
                 {
+                    "key": "greeting-text",
+                    "name": "Greeting message to display inside a chat window when opened<br><span style='font-size:11px; color:#800000;'>If empty, it will default to \"Hi there \nHow can I help you today?\"</span>",
+                    "type": "textarea",
+                    "default": "Hi there How can I help you today?"
+                },
+                {
                     "key": "request-prepend-text",
                     "name": "Text to prepend to a question (Optional). <br/><span style='font-size:11px; color:#800000;'>(Example: \"Reformulate the response as a single paragraph.\")</span>",
                     "default": "",
                     "type": "textarea"
-                },        {
+                },
+                {
                     "key": "use-files-data",
                     "name": "Refer strictly to the uploaded file to provide response",
                     "type": "checkbox",

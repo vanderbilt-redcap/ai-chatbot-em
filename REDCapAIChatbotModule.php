@@ -33,6 +33,13 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
 
             <?php
             include "ai_chat/index.html";
+            ?>
+            <script>
+                var greetingTexts = <?php echo json_encode($this->getProjectSetting('greeting-text')); ?>;
+                var defaultGreetText = "Hi there <br>How can I help you today?";
+                $("#greeting-text").html(greetingTexts[0]);
+            </script>
+            <?php
         }
         // Insert chatbot on data entry forms or survey page
         if (PAGE == 'DataEntry/index.php' || PAGE == 'surveys/index.php') {
@@ -51,6 +58,7 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
                         ?>
                         <script type="text/javascript">
                             var settingTitles = <?php echo json_encode($this->getProjectSetting('setting-name')); ?>;
+                            var greetingTexts = <?php echo json_encode($this->getProjectSetting('greeting-text')); ?>;
                             $(function(){ setTimeout(function(){ insertChatBot("<?=$field?>", "<?=($num+1)?>") },500); });</script>
                         <?php
                     }

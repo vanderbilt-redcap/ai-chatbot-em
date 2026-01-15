@@ -248,6 +248,9 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
         $setting_titles[] = $settingTitles[$i];
     }
     print $response."###".$count."###".json_encode($setting_titles); exit;
+} else if (isset($_GET['action']) && $_GET['action'] == 'unset_response_id') {
+    unset($_SESSION['prev_response_id']);
+    print "1"; exit;
 }
 
 print json_encode(($output));

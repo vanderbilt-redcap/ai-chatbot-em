@@ -89,8 +89,27 @@ $( document ).ready(function() {
     $('#setting-sel').change(function () {
         var loadingText = '<div id="loading-div" style="margin-left: 10px; float: left;"><img alt="Loading Setting..." src="' + app_path_images + 'progress_circle.gif">&nbsp; Loading Setting...</div>';
         $(this).parent().after(loadingText);
-        setTimeout(function() { $("#loading-div").remove(); }, 2000);
-        $('ul.chatbox li:not(:first-child)').remove();
+        $.ajax({
+            cache: false,
+            url: get_response_url+'&action=unset_response_id',
+            success: function (data) {
+                showProgress(0,0);
+                if (data == 1) {
+                    var settingNum = $('#setting-sel').find(":selected").val();
+                    var greetText = defaultGreetText;
+                    if (greetingTexts[settingNum-1]) {
+                        greetText = greetingTexts[settingNum-1];
+                    }
+                    $("#greeting-text").html(greetText);
+
+                    $("#loading-div").remove();
+                    $('ul.chatbox li:not(:first-child)').remove();
+                }
+            },
+            error:function (xhr, ajaxOptions, thrownError){
+
+            }
+        });
     });
 
     $("span.download-icon").click(function () {
@@ -376,6 +395,10 @@ function insertChatBot(name, setupNum) {
         if (settingTitles[setupNum-1] != '' && settingTitles[setupNum-1] != null) {
             settingTitle = settingTitles[setupNum-1];
         }
+        var greetingText = 'Hi there <br>How can I help you today?';
+        if (greetingTexts[setupNum-1] != '' && greetingTexts[setupNum-1] != null) {
+            greetingText = greetingTexts[setupNum-1];
+        }
         $('head').append('<link rel="stylesheet" type="text/css" href="'+rc_chatbot_css_url+'">');
 
         var html = "<div style='margin-top: 10px;' class=\"rc-chatbot-container\">\n" +
@@ -385,7 +408,7 @@ function insertChatBot(name, setupNum) {
             "  <ul class=\"rc-chatbox\">\n" +
             "        <li class=\"chat incoming\">\n" +
             "            <span><i class=\"fas fa-robot\"></i></span>\n" +
-            "            <p>Hi there <br>How can I help you today?</p>\n" +
+            "            <p>"+greetingText+"</p>\n" +
             "        </li>\n" +
             "    </ul>\n" +
             "  <div class=\"rc-chatbot-input\">\n" +
