@@ -39,15 +39,22 @@
                     "field-type": "descriptive"
                 },
                 {
+                    "key": "greeting-text",
+                    "name": "Greeting message to display inside a chat window when opened<br><span style='font-size:11px; color:#800000;'>If empty, it will default to \"Hi there \nHow can I help you today?\"</span>",
+                    "type": "textarea",
+                    "default": "Hi there How can I help you today?"
+                },
+                {
+                    "key": "request-prepend-system-text",
+                    "name": "<b>[Important]</b> System Prompt: Starting text of instruction. <br/><span style='font-size:11px; color:#800000;'>(Example: \"You are an assistant which answers questions based on knowledge which is provided to you. You provide accurate and concise answers. While answering, you don't use your internal knowledge, but solely the information in the uploaded files. You don't mention any reference of files in response.\")<br>Note: This is important part so be careful while changing this. You can add instruction on weather to restrict search for uploaded files or not by entering appropriate prompt.</span>",
+                    "default": "You are an assistant which answers questions based on knowledge which is provided to you. You provide accurate and concise answers. While answering, you don't use your internal knowledge, but solely the information in the uploaded files. You don't mention any reference of files in response.",
+                    "type": "textarea"
+                },
+                {
                     "key": "request-prepend-text",
-                    "name": "Text to prepend to a question (Optional). <br/><span style='font-size:11px; color:#800000;'>(Example: \"Reformulate the response as a single paragraph.\")</span>",
+                    "name": "Text to prepend to a question (Optional). <br/><span style='font-size:11px; color:#800000;'>(Example: \"Reformulate the response as plain text only. Do not use Markdown, bolding, italics, or headings.\")</span>",
                     "default": "",
                     "type": "textarea"
-                },        {
-                    "key": "use-files-data",
-                    "name": "Refer strictly to the uploaded file to provide response",
-                    "type": "checkbox",
-                    "default": true
                 },
                 {
                     "key": "custom-message",

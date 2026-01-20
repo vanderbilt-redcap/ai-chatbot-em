@@ -48,12 +48,11 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
         }
 
         $prependText = $module->getProjectSetting('request-prepend-text')[$num];
-        if ($module->getProjectSetting('use-files-data')[$num] == true) { // "Refer strictly to the uploaded file to provide response" is checked
-            $systemPrompt = "You are an AI assistant that answers questions strictly based on the provided documents in the vector store. Do not use any external or general knowledge. If the answer is not in the documents, print '".$messageText."'. You don't mention any reference of files in response.";
+        if ($module->getProjectSetting('request-prepend-system-text')[$num] != '') {
+            $systemPrompt = $module->getProjectSetting('request-prepend-system-text')[$num];
         } else {
             $systemPrompt = "You are an assistant which answers questions based on knowledge which is provided to you. You provide accurate and concise answers. While answering, you don't use your internal knowledge, but solely the information in the uploaded files. You don't mention any reference of files in response.";
         }
-
 
         $temperature = (float)$module->getProjectSetting("temperature")[$num] ?: 0.5;
         $max_num_results = (float)$module->getProjectSetting("max_num_results")[$num] ?: 4;
@@ -62,7 +61,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
         $resText = "";
         if (!empty($prependText))  $prependText = '<br>'.$prependText;
         $prompt = $systemPrompt.$prependText
-            ."<br>Reformulate the response as plain text only. Do not use Markdown, bolding, italics, or headings."
             ."<br>Answer the question below:<br>"
             .$_POST['prompt_text'];
         //echo $prompt; die;
@@ -248,6 +246,9 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
         $setting_titles[] = $settingTitles[$i];
     }
     print $response."###".$count."###".json_encode($setting_titles); exit;
+} else if (isset($_GET['action']) && $_GET['action'] == 'unset_response_id') {
+    unset($_SESSION['prev_response_id']);
+    print "1"; exit;
 }
 
 print json_encode(($output));
