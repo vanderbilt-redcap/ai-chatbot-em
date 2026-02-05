@@ -100,6 +100,7 @@ $( document ).ready(function() {
                     if (greetingTexts[settingNum-1]) {
                         greetText = greetingTexts[settingNum-1];
                     }
+                    console.log(greetText+"###");
                     $("#greeting-text").html(greetText);
 
                     $("#loading-div").remove();
