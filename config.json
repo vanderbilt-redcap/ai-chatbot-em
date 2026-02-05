@@ -14,6 +14,15 @@
             "institution": "Vanderbilt University Medical Center"
         }
     ],
+    "links": {
+        "control-center": [
+            {
+                "name": "Chatbot Logging",
+                "icon": "table",
+                "url": "index.php"
+            }
+        ]
+    },
     "project-settings": [
         {
             "key": "settings",

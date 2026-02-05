@@ -36,8 +36,12 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
             ?>
             <script>
                 var greetingTexts = <?php echo json_encode($this->getProjectSetting('greeting-text')); ?>;
-                var defaultGreetText = "Hi there <br>How can I help you today?";
-                $("#greeting-text").html(greetingTexts[0]);
+                if (greetingTexts[0] == undefined || greetingTexts[0] == '') {
+                    greetingText = "Hi there <br>How can I help you today?";
+                } else {
+                    greetingText = greetingTexts[0];
+                }
+                $("#greeting-text").html(greetingText);
             </script>
             <?php
         }
@@ -319,5 +323,58 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
         $sql = "DELETE FROM redcap_folders_vector_stores_items 
                 WHERE project_id = '".$projectId."' AND folder_id = '".$folderId."' AND vs_id = '".$vsId."'";
         db_query($sql);
+    }
+
+    public function getLoggingData($params) {
+        if(SUPER_USER == "1") {
+            $getQueryInfo = $this->getQuery();
+            $sql = $getQueryInfo['query'];
+
+            $result = $this->query($sql, []);
+
+            $returnedData = [];
+            while ($row = db_fetch_assoc($result)) {
+                $returnedData[] = $row;
+            }
+
+            $finalArray = ['data' => $returnedData, 'columns' => $getQueryInfo['columns']];
+            echo htmlentities(strip_tags(json_encode($finalArray)), ENT_QUOTES, 'UTF-8');
+        } else {
+            echo "something went wrong";
+        }
+    }
+    public function getQuery() {
+        if(SUPER_USER == "1") {
+            $columns =  [['data' => 'Project ID', 'title' => 'Project ID'], ['data' => 'Username', 'title' => 'Username'], ['data' => 'REDCap Folder', 'title' => 'REDCap Folder'], ['data' => 'Question', 'title' => 'Question'], ['data' => 'Response Text', 'title' => 'Response Text'], ['data' => 'Execution Time', 'title' => 'Execution Time (In seconds)'], ['data' => 'Created At', 'title' => 'Created At']];
+
+            $query = "SELECT a.project_id, username, b.name, question, user_response, execution_time, created_at,
+                CAST(a.project_id AS char) AS 'Project ID', 
+                CAST(username AS char) AS 'Username', 
+                b.name AS 'REDCap Folder', 
+                CAST(question AS char) AS 'Question', 
+                CAST(user_response AS char) AS 'Response Text', 
+                CAST(execution_time AS DECIMAL(10, 2)) AS 'Execution Time',
+                CAST(created_at AS date) AS 'Created At'
+                FROM redcap_ai_chatbot_log as a
+                LEFT JOIN redcap_folders AS b
+                ON a.folder_id=b.folder_id
+                ORDER BY a.ai_log_id DESC";
+            return ['query' => $query, 'columns' => $columns];
+        } else {
+            echo "Something went wrong";
+        }
+    }
+    public function generateJavascriptObject() {
+        if(SUPER_USER == "1") {
+            return htmlspecialchars(json_encode([
+                'urlLookup' => array(
+                    'redcapBase' => (isset($_SERVER['HTTPS']) ? 'https://' : 'http://') . SERVER_NAME . APP_PATH_WEBROOT,
+                    'post' => $this->getUrl("requestHandler.php")
+                ),
+                //'redcap_csrf_token' => $this->getCSRFToken()
+            ]), ENT_QUOTES);
+        } else {
+            echo "Something went wrong";
+        }
     }
 }
