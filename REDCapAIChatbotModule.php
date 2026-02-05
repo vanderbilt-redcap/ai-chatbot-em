@@ -36,6 +36,7 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
             ?>
             <script>
                 var greetingTexts = <?php echo json_encode($this->getProjectSetting('greeting-text')); ?>;
+                var defaultGreetText = "Hi there <br>How can I help you today?";
                 if (greetingTexts[0] == undefined || greetingTexts[0] == '') {
                     greetingText = "Hi there <br>How can I help you today?";
                 } else {
