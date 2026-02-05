@@ -100,7 +100,6 @@ $( document ).ready(function() {
                     if (greetingTexts[settingNum-1]) {
                         greetText = greetingTexts[settingNum-1];
                     }
-                    console.log(greetText+"###");
                     $("#greeting-text").html(greetText);
 
                     $("#loading-div").remove();
@@ -119,7 +118,6 @@ $( document ).ready(function() {
         $('.chatbox li').each(function() {
             if ($(this).hasClass("incoming")) {
                 var botText = '';
-                console.log($(this).find("div > div.result-text").length);
                 if ($(this).find("div > div.result-text").length > 0) {
                     botText = $(this).find("div > div.result-text").clone();
                 } else {
