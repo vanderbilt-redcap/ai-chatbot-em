@@ -312,7 +312,7 @@ function generateResponse(chatElement, setupNum) {
 
     $.ajax({
         method: 'POST',
-        url: get_response_url+url_param,
+        url: get_response_url+url_param+'&NOAUTH',
         data: { prompt_text: userMessage, action: "generate"},
         dataType: 'json'
     })
