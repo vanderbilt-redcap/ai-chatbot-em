@@ -23,16 +23,16 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
         unset($_SESSION['prev_response_id']);
         if (!is_null($project_id)) {
             ?>
-            <link rel="stylesheet" href="<?php echo $this->getUrl('ai_chat/style.css'); ?>">
+            <link rel="stylesheet" href="<?php echo $this->getUrl('includes/style.css'); ?>">
             <script>
                 var get_response_url = "<?php echo $this->getUrl('generate_response.php'); ?>";
-                var rc_chatbot_css_url = "<?php echo $this->getUrl('ai_chat/rc_chatbot.css'); ?>"
+                var rc_chatbot_css_url = "<?php echo $this->getUrl('includes/rc_chatbot.css'); ?>"
                 var user_name = "<?php echo USERID;?>";
             </script>
             <script src="<?php echo $this->getUrl('js/script.js'); ?>" defer></script>
 
             <?php
-            include "ai_chat/index.html";
+            include "includes/index.html";
             ?>
             <script>
                 var greetingTexts = <?php echo json_encode($this->getProjectSetting('greeting-text')); ?>;

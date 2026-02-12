@@ -164,7 +164,7 @@ $( document ).ready(function() {
         } else {
             $("#send-btn").css("color", "#888");
         }
-        autoResizeInputBox();
+        autoResizeInputBox(chatInput);
     });
 
     $(".chatbot span.sync-icon").click(function() {
@@ -224,11 +224,21 @@ $( document ).ready(function() {
         } else {
             $(this).next('span').css("color", "#888");
         }
+        autoResizeInputBox($(this));
     });
 
     // Copy-to-clipboard action
     $(document).on("click", ".btn-copy-clipboard" , function(){
         copyResponseToClipboard($(this));
+    });
+    $(document).on("keydown", ".rc-question-area" , function(e){
+        var start = new Date();
+        // If Enter key is pressed without Shift key and the window
+        // width is greater than 800px, handle the chat
+        if (e.key === "Enter" && !e.shiftKey && window.innerWidth > 800) {
+            e.preventDefault();
+            $(this).next('span').click();
+        }
     });
 });
 
@@ -264,22 +274,26 @@ function copyResponseToClipboard(ob) {
     },2000);
 }
 
-function autoResizeInputBox() {
+function autoResizeInputBox(chatInputObj) {
+    if (chatInputObj != undefined || chatInputObj != '') {
+        var chatInputElm = chatInputObj;
+    }
     // Reset the height to 'auto' to correctly calculate the new scrollHeight
-    chatInput.height('auto');
+    chatInputElm.height('auto');
 
     // Set the height to the new scrollHeight, but clamp it at the max-height
     // We get the max-height from the element's computed style
-    const maxHeight = parseFloat(window.getComputedStyle(chatInput[0]).maxHeight) - 15;
-    var scrollHeight = chatInput[0].scrollHeight - 15;
+    const maxHeight = parseFloat(window.getComputedStyle(chatInputElm[0]).maxHeight) - 15;
+    var scrollHeight = chatInputElm[0].scrollHeight - 15;
+    console.log(scrollHeight+"---"+maxHeight);
     if (scrollHeight > maxHeight) {
-        chatInput.height(`${maxHeight}px`);
-        chatInput.css({
+        chatInputElm.height(`${maxHeight}px`);
+        chatInputElm.css({
             overflowY: "auto"
         });
     } else {
-        chatInput.height(`${scrollHeight}px`);
-        chatInput.css({
+        chatInputElm.height(`${scrollHeight}px`);
+        chatInputElm.css({
             overflowY: "scroll"
         });
     }
@@ -412,7 +426,7 @@ function insertChatBot(name, setupNum) {
             "    </ul>\n" +
             "  <div class=\"rc-chatbot-input\">\n" +
             "    <textarea id=\"rc-user-input\" class=\"rc-question-area\" placeholder=\"Enter a question...\"></textarea>\n" +
-            "    <span style='vertical-align: middle; padding:15px 15px 15px 0; color: #888;' onclick=\"askQuestion('"+name+"', "+setupNum+")\"><i class=\"fas fa-arrow-alt-circle-up fa-2xl\"></i></span>\n" +
+            "    <span style='vertical-align: middle; padding:15px 15px 15px 0; color: #888;' onclick=\"askQuestion('"+name+"', "+setupNum+")\"><i class=\"fa-solid fa-paper-plane fa-2xl\"></i></span>\n" +
             "  </div>\n" +
             "</div>";
 
