@@ -125,7 +125,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
 
         $resultText = "<div class='table-container'>
                         <div class='table-row' style='float: right; font-size: 11px;'>
-                            <button class='btn btn-xs btn-copy-clipboard' title='Copy to clipboard' style='padding:3px 8px 3px 6px; font-size: 11px; color: #666;'>
+                            <button type='button' class='btn btn-xs btn-copy-clipboard' title='Copy to clipboard' style='padding:3px 8px 3px 6px; font-size: 11px; color: #666;'>
                                 <i class='fas fa-copy'></i> Copy</button>
                         </div>
                         <div class='table-row result-text'>".nl2br($resText)."</div>

@@ -201,19 +201,19 @@ $( document ).ready(function() {
                     },
                     dataType: 'json'
                 })
-                .done(function(data) {
-                    if (data.status != 1) {
-                        //alert(data.error.message);
-                    } else {
-                        //alert(data.message);
-                    }
-                })
-                .fail(function(data) {
-                    //alert("fail"+JSON.stringify(data));
-                })
-                .always(function(data) {
+                    .done(function(data) {
+                        if (data.status != 1) {
+                            //alert(data.error.message);
+                        } else {
+                            //alert(data.message);
+                        }
+                    })
+                    .fail(function(data) {
+                        //alert("fail"+JSON.stringify(data));
+                    })
+                    .always(function(data) {
 
-                });
+                    });
             }, 0);
         }
     });
@@ -229,6 +229,15 @@ $( document ).ready(function() {
     // Copy-to-clipboard action
     $(document).on("click", ".btn-copy-clipboard" , function(){
         copyResponseToClipboard($(this));
+    });
+    $(document).on("keydown", ".rc-question-area" , function(e){
+        var start = new Date();
+        // If Enter key is pressed without Shift key and the window
+        // width is greater than 800px, handle the chat
+        if (e.key === "Enter" && !e.shiftKey && window.innerWidth > 800) {
+            e.preventDefault();
+            $(this).next('span').click();
+        }
     });
 });
 
@@ -262,6 +271,7 @@ function copyResponseToClipboard(ob) {
             $('#'+copyid).remove();
         });
     },2000);
+    return false;
 }
 
 function autoResizeInputBox() {
@@ -316,20 +326,20 @@ function generateResponse(chatElement, setupNum) {
         data: { prompt_text: userMessage, action: "generate"},
         dataType: 'json'
     })
-    .done(function(data) {
-        if (data.status != 1) {
-            alert(data.error.message);
-        } else {
-            //typeWriterEffect(chatElement.querySelector("p"), data.message, 5); // Type into 'myDiv' with 50ms delay per character
-            chatElement.querySelector("div").innerHTML = data.message;
-        }
-    })
-    .fail(function(data) {
+        .done(function(data) {
+            if (data.status != 1) {
+                alert(data.error.message);
+            } else {
+                //typeWriterEffect(chatElement.querySelector("p"), data.message, 5); // Type into 'myDiv' with 50ms delay per character
+                chatElement.querySelector("div").innerHTML = data.message;
+            }
+        })
+        .fail(function(data) {
 
-    })
-    .always(function(data) {
+        })
+        .always(function(data) {
 
-    });
+        });
 }
 
 function handleChat(chatInput = '', chatbox = '', setupNum = '') {
@@ -400,7 +410,7 @@ function insertChatBot(name, setupNum) {
         }
         $('head').append('<link rel="stylesheet" type="text/css" href="'+rc_chatbot_css_url+'">');
 
-        var html = "<div style='margin-top: 10px;' class=\"rc-chatbot-container\">\n" +
+        var html = "<div style='margin-top: 10px;' class=\"rc-chatbot-container\" id='setup-"+setupNum+"'>\n" +
             "  <div class=\"rc-chatbot-header\">\n" +
             settingTitle+"\n" +
             "  </div>\n" +
@@ -412,7 +422,7 @@ function insertChatBot(name, setupNum) {
             "    </ul>\n" +
             "  <div class=\"rc-chatbot-input\">\n" +
             "    <textarea id=\"rc-user-input\" class=\"rc-question-area\" placeholder=\"Enter a question...\"></textarea>\n" +
-            "    <span style='vertical-align: middle; padding:15px 15px 15px 0; color: #888;' onclick=\"askQuestion('"+name+"', "+setupNum+")\"><i class=\"fas fa-arrow-alt-circle-up fa-2xl\"></i></span>\n" +
+            "    <span style='vertical-align: middle; padding:15px 15px 15px 0; color: #888;' onclick=\"askQuestion('"+name+"', "+setupNum+")\"><i class=\"fa-solid fa-paper-plane fa-2xl\"></i></span>\n" +
             "  </div>\n" +
             "</div>";
 
@@ -424,5 +434,5 @@ function insertChatBot(name, setupNum) {
     }
 }
 function askQuestion(name, setupNum) {
-    handleChat($('tr#'+name+'-tr').find("#rc-user-input"), $('tr#'+name+'-tr').find(".rc-chatbox"), setupNum);
+    handleChat($('tr#'+name+'-tr #setup-'+setupNum).find("#rc-user-input"), $('tr#'+name+'-tr #setup-'+setupNum).find(".rc-chatbox"), setupNum);
 }
