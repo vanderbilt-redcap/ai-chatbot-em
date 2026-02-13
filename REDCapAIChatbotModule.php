@@ -32,7 +32,9 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
             <script src="<?php echo $this->getUrl('js/script.js'); ?>" defer></script>
 
             <?php
-            include "includes/index.html";
+            if (PAGE != 'surveys/index.php') {
+                include "includes/index.html";
+            }
             ?>
             <script>
                 var greetingTexts = <?php echo json_encode($this->getProjectSetting('greeting-text')); ?>;

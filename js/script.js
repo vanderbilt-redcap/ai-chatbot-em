@@ -164,7 +164,7 @@ $( document ).ready(function() {
         } else {
             $("#send-btn").css("color", "#888");
         }
-        autoResizeInputBox(chatInput);
+        autoResizeInputBox();
     });
 
     $(".chatbot span.sync-icon").click(function() {
@@ -201,19 +201,19 @@ $( document ).ready(function() {
                     },
                     dataType: 'json'
                 })
-                .done(function(data) {
-                    if (data.status != 1) {
-                        //alert(data.error.message);
-                    } else {
-                        //alert(data.message);
-                    }
-                })
-                .fail(function(data) {
-                    //alert("fail"+JSON.stringify(data));
-                })
-                .always(function(data) {
+                    .done(function(data) {
+                        if (data.status != 1) {
+                            //alert(data.error.message);
+                        } else {
+                            //alert(data.message);
+                        }
+                    })
+                    .fail(function(data) {
+                        //alert("fail"+JSON.stringify(data));
+                    })
+                    .always(function(data) {
 
-                });
+                    });
             }, 0);
         }
     });
@@ -224,7 +224,6 @@ $( document ).ready(function() {
         } else {
             $(this).next('span').css("color", "#888");
         }
-        autoResizeInputBox($(this));
     });
 
     // Copy-to-clipboard action
@@ -272,28 +271,25 @@ function copyResponseToClipboard(ob) {
             $('#'+copyid).remove();
         });
     },2000);
+    return false;
 }
 
-function autoResizeInputBox(chatInputObj) {
-    if (chatInputObj != undefined || chatInputObj != '') {
-        var chatInputElm = chatInputObj;
-    }
+function autoResizeInputBox() {
     // Reset the height to 'auto' to correctly calculate the new scrollHeight
-    chatInputElm.height('auto');
+    chatInput.height('auto');
 
     // Set the height to the new scrollHeight, but clamp it at the max-height
     // We get the max-height from the element's computed style
-    const maxHeight = parseFloat(window.getComputedStyle(chatInputElm[0]).maxHeight) - 15;
-    var scrollHeight = chatInputElm[0].scrollHeight - 15;
-    console.log(scrollHeight+"---"+maxHeight);
+    const maxHeight = parseFloat(window.getComputedStyle(chatInput[0]).maxHeight) - 15;
+    var scrollHeight = chatInput[0].scrollHeight - 15;
     if (scrollHeight > maxHeight) {
-        chatInputElm.height(`${maxHeight}px`);
-        chatInputElm.css({
+        chatInput.height(`${maxHeight}px`);
+        chatInput.css({
             overflowY: "auto"
         });
     } else {
-        chatInputElm.height(`${scrollHeight}px`);
-        chatInputElm.css({
+        chatInput.height(`${scrollHeight}px`);
+        chatInput.css({
             overflowY: "scroll"
         });
     }
@@ -330,20 +326,20 @@ function generateResponse(chatElement, setupNum) {
         data: { prompt_text: userMessage, action: "generate"},
         dataType: 'json'
     })
-    .done(function(data) {
-        if (data.status != 1) {
-            alert(data.error.message);
-        } else {
-            //typeWriterEffect(chatElement.querySelector("p"), data.message, 5); // Type into 'myDiv' with 50ms delay per character
-            chatElement.querySelector("div").innerHTML = data.message;
-        }
-    })
-    .fail(function(data) {
+        .done(function(data) {
+            if (data.status != 1) {
+                alert(data.error.message);
+            } else {
+                //typeWriterEffect(chatElement.querySelector("p"), data.message, 5); // Type into 'myDiv' with 50ms delay per character
+                chatElement.querySelector("div").innerHTML = data.message;
+            }
+        })
+        .fail(function(data) {
 
-    })
-    .always(function(data) {
+        })
+        .always(function(data) {
 
-    });
+        });
 }
 
 function handleChat(chatInput = '', chatbox = '', setupNum = '') {
@@ -414,7 +410,7 @@ function insertChatBot(name, setupNum) {
         }
         $('head').append('<link rel="stylesheet" type="text/css" href="'+rc_chatbot_css_url+'">');
 
-        var html = "<div style='margin-top: 10px;' class=\"rc-chatbot-container\">\n" +
+        var html = "<div style='margin-top: 10px;' class=\"rc-chatbot-container\" id='setup-"+setupNum+"'>\n" +
             "  <div class=\"rc-chatbot-header\">\n" +
             settingTitle+"\n" +
             "  </div>\n" +
@@ -438,5 +434,5 @@ function insertChatBot(name, setupNum) {
     }
 }
 function askQuestion(name, setupNum) {
-    handleChat($('tr#'+name+'-tr').find("#rc-user-input"), $('tr#'+name+'-tr').find(".rc-chatbox"), setupNum);
+    handleChat($('tr#'+name+'-tr #setup-'+setupNum).find("#rc-user-input"), $('tr#'+name+'-tr #setup-'+setupNum).find(".rc-chatbox"), setupNum);
 }
