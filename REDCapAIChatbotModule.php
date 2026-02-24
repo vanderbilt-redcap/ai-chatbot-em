@@ -358,7 +358,7 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
                 CAST(user_question AS char) AS 'Question', 
                 CAST(user_response AS char) AS 'Response Text', 
                 CAST(execution_time AS DECIMAL(10, 2)) AS 'Execution Time',
-                CAST(created_at AS date) AS 'Created At'
+                CAST(created_at AS datetime) AS 'Created At'
                 FROM redcap_ai_chatbot_log as a
                 LEFT JOIN redcap_folders AS b
                 ON a.folder_id=b.folder_id
