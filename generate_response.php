@@ -119,8 +119,8 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
         }
 
         $username = defined('USERID') ? USERID : '';
-        $sql = "INSERT INTO redcap_ai_chatbot_log (project_id, username, folder_id, vs_id, question, response, user_response, execution_time, session_id, created_at)
-			            VALUES ('".$projectId."', '".$username."', '".$folderId."', '".$vsId."', '".db_escape($prompt)."', '".json_encode($response)."', '".db_escape($userResText)."', '".$execution_time."', '".session_id()."', '".NOW."')";
+        $sql = "INSERT INTO redcap_ai_chatbot_log (project_id, username, folder_id, vs_id, question, user_question, response, user_response, execution_time, session_id, created_at)
+			            VALUES ('".$projectId."', '".$username."', '".$folderId."', '".$vsId."', '".db_escape($prompt)."', '".db_escape($_POST['prompt_text'])."', '".json_encode($response)."', '".db_escape($userResText)."', '".$execution_time."', '".session_id()."', '".NOW."')";
         db_query($sql);
 
         $resultText = "<div class='table-container'>
