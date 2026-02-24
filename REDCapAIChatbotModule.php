@@ -348,13 +348,14 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
     }
     public function getQuery() {
         if(SUPER_USER == "1") {
-            $columns =  [['data' => 'Project ID', 'title' => 'Project ID'], ['data' => 'Username', 'title' => 'Username'], ['data' => 'REDCap Folder', 'title' => 'REDCap Folder'], ['data' => 'Question', 'title' => 'Question'], ['data' => 'Response Text', 'title' => 'Response Text'], ['data' => 'Execution Time', 'title' => 'Execution Time (In seconds)'], ['data' => 'Created At', 'title' => 'Created At']];
+            $columns =  [['data' => 'Project ID', 'title' => 'Project ID'], ['data' => 'Username', 'title' => 'Username'], ['data' => 'REDCap Folder', 'title' => 'REDCap Folder'], ['data' => 'Question with Prompt', 'title' => 'Question [with Prompt]'], ['data' => 'Question', 'title' => 'Question'], ['data' => 'Response Text', 'title' => 'Response Text'], ['data' => 'Execution Time', 'title' => 'Execution Time (In seconds)'], ['data' => 'Created At', 'title' => 'Created At']];
 
-            $query = "SELECT a.project_id, username, b.name, question, user_response, execution_time, created_at,
+            $query = "SELECT a.project_id, username, b.name, question, user_question, user_response, execution_time, created_at,
                 CAST(a.project_id AS char) AS 'Project ID', 
                 CAST(username AS char) AS 'Username', 
                 b.name AS 'REDCap Folder', 
-                CAST(question AS char) AS 'Question', 
+                CAST(question AS char) AS 'Question with Prompt', 
+                CAST(user_question AS char) AS 'Question', 
                 CAST(user_response AS char) AS 'Response Text', 
                 CAST(execution_time AS DECIMAL(10, 2)) AS 'Execution Time',
                 CAST(created_at AS date) AS 'Created At'
