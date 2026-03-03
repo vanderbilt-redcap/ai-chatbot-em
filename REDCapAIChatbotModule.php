@@ -348,10 +348,11 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
     }
     public function getQuery() {
         if(SUPER_USER == "1") {
-            $columns =  [['data' => 'Project ID', 'title' => 'Project ID'], ['data' => 'Username', 'title' => 'Username'], ['data' => 'REDCap Folder', 'title' => 'REDCap Folder'], ['data' => 'Question with Prompt', 'title' => 'Question [with Prompt]'], ['data' => 'Question', 'title' => 'Question'], ['data' => 'Response Text', 'title' => 'Response Text'], ['data' => 'Execution Time', 'title' => 'Execution Time (In seconds)'], ['data' => 'Created At', 'title' => 'Created At']];
+            $columns =  [['data' => 'Project ID', 'title' => 'Project ID'], ['data' => 'Project Title', 'title' => 'Project Title'], ['data' => 'Username', 'title' => 'Username'], ['data' => 'REDCap Folder', 'title' => 'REDCap Folder'], ['data' => 'Question with Prompt', 'title' => 'Question [with Prompt]'], ['data' => 'Question', 'title' => 'Question'], ['data' => 'Response Text', 'title' => 'Response Text'], ['data' => 'Execution Time', 'title' => 'Execution Time (In seconds)'], ['data' => 'Created At', 'title' => 'Created At']];
 
             $query = "SELECT a.project_id, username, b.name, question, user_question, user_response, execution_time, created_at,
                 CAST(a.project_id AS char) AS 'Project ID', 
+                CAST(c.app_title AS char) AS 'Project Title',
                 CAST(username AS char) AS 'Username', 
                 b.name AS 'REDCap Folder', 
                 CAST(question AS char) AS 'Question with Prompt', 
@@ -360,8 +361,8 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
                 CAST(execution_time AS DECIMAL(10, 2)) AS 'Execution Time',
                 CAST(created_at AS datetime) AS 'Created At'
                 FROM redcap_ai_chatbot_log as a
-                LEFT JOIN redcap_folders AS b
-                ON a.folder_id=b.folder_id
+                LEFT JOIN redcap_folders AS b ON a.folder_id=b.folder_id
+                LEFT JOIN redcap_projects AS c ON c.project_id = a.project_id
                 ORDER BY a.ai_log_id DESC";
             return ['query' => $query, 'columns' => $columns];
         } else {
