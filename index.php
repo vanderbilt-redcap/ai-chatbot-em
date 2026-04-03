@@ -42,7 +42,7 @@ if(SUPER_USER == "1") {
 
         #pagecontainer
         {
-            max-width: 80%;
+            max-width: 90%;
             /*cursor: progress;*/
         }
         table thead tr th {
