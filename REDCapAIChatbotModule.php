@@ -28,6 +28,7 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
                 var get_response_url = "<?php echo $this->getUrl('generate_response.php'); ?>";
                 var rc_chatbot_css_url = "<?php echo $this->getUrl('includes/rc_chatbot.css'); ?>"
                 var user_name = "<?php echo USERID;?>";
+                var no_auth_param = '';
             </script>
             <script src="<?php echo $this->getUrl('js/script.js'); ?>" defer></script>
 
@@ -50,6 +51,13 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
         }
         // Insert chatbot on data entry forms or survey page
         if (PAGE == 'DataEntry/index.php' || PAGE == 'surveys/index.php') {
+            if (PAGE == 'surveys/index.php') {
+                ?>
+                <script>
+                    var no_auth_param = '&NOAUTH';
+                </script>
+                <?php
+            }
             $this->appendChatBotToFields();
         }
     }
