@@ -37,7 +37,23 @@ $(document).ready(function () {
                     data: newData.data,
                     layout: {
                         topStart: {
-                            buttons: ['colvis', 'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5']
+                            buttons: [
+                                {
+                                    extend: 'colvis'
+                                },
+                                {
+                                    extend: 'csvHtml5',
+                                    filename: 'REDCap_Chatbot_Logging' // File will be saved as REDCap_Chatbot_Logging.csv
+                                },
+                                {
+                                    extend: 'excelHtml5',
+                                    filename: 'REDCap_Chatbot_Logging' // File will be saved as REDCap_Chatbot_Logging.xls
+                                },
+                                {
+                                    extend: 'pdfHtml5',
+                                    filename: 'REDCap_Chatbot_Logging' // File will be saved as REDCap_Chatbot_Logging.pdf
+                                }
+                            ]
                         }
                     },
                     language: {
