@@ -35,7 +35,16 @@ $(document).ready(function () {
 
                 let table = $("#aichatTable").DataTable({
                     data: newData.data,
-
+                    layout: {
+                        topStart: {
+                            buttons: ['colvis', 'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5']
+                        }
+                    },
+                    language: {
+                        buttons: {
+                            colvis: 'Show/Hide Columns' // This will be used for all colvis buttons in this table
+                        }
+                    },
                     scrollXInner: true,
                     scrollY: true,
                     colReorder: true,
@@ -69,7 +78,7 @@ $(document).ready(function () {
                             .every(function () {
                                 let column = this;
                                 let $filterTd = $(
-                                    '<th data-column-index="' + column.index() + '"></th>'
+                                    '<th data-dt-column="' + column.index() + '"></th>'
                                 );
                                 $filterTd.append('<input style="width: 100%"/>');
 
@@ -80,13 +89,13 @@ $(document).ready(function () {
                                 });
                                 $filterRow.append($filterTd);
                             });
-                        $("div .dataTables_scrollHeadInner thead").append($filterRow);
+                        $("div .dt-scroll-headInner thead").append($filterRow);
                     },
                 });
 
                 // sync filter visibility with column
                 table.on("column-visibility.dt", function (e, settings, column, state) {
-                    let $filterTd = $(".filter-row > td").eq(column);
+                    let $filterTd = $(".filter-row > th").eq(column);
 
                     state ? $filterTd.show() : $filterTd.hide();
                 });
