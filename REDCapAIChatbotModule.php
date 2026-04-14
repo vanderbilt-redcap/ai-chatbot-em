@@ -345,6 +345,9 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
 
             $returnedData = [];
             while ($row = db_fetch_assoc($result)) {
+                if ($row['from_survey'] == 1) {
+                    $row['Username'] = "[Survey] ".$row['Username'];
+                }
                 $returnedData[] = $row;
             }
 
@@ -358,7 +361,7 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
         if(SUPER_USER == "1") {
             $columns =  [['data' => 'Project ID', 'title' => 'Project ID'], ['data' => 'Project Title', 'title' => 'Project Title'], ['data' => 'Username', 'title' => 'Username'], ['data' => 'Setup Title', 'title' => 'Setup Title'], ['data' => 'REDCap Folder', 'title' => 'REDCap Folder'], ['data' => 'Question with Prompt', 'title' => 'Question [with Prompt]'], ['data' => 'Question', 'title' => 'Question'], ['data' => 'Response Text', 'title' => 'Response Text'], ['data' => 'Execution Time', 'title' => 'Execution Time (In seconds)'], ['data' => 'Created At', 'title' => 'Created At']];
 
-            $query = "SELECT a.project_id, username, b.name, question, user_question, user_response, execution_time, created_at,
+            $query = "SELECT a.project_id, username, b.name, question, user_question, user_response, execution_time, created_at, from_survey,
                 CAST(a.project_id AS char) AS 'Project ID', 
                 CAST(c.app_title AS char) AS 'Project Title',
                 CAST(username AS char) AS 'Username', 
