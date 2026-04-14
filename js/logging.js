@@ -64,6 +64,7 @@ $(document).ready(function () {
                             colvis: 'Show/Hide Columns' // This will be used for all colvis buttons in this table
                         }
                     },
+                    order: [[9, 'desc']],
                     "pageLength": 100,
                     "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
                     scrollXInner: true,
@@ -75,10 +76,10 @@ $(document).ready(function () {
                     },
                     columnDefs: [
                         {
-                            targets: 0,
+                            targets: "_all",
                             data: null,
                             defaultContent: "",
-                            orderable: false,
+                            orderable: true,
                             className: "",
                         },
                     ],
