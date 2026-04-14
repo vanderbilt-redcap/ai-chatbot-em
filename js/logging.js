@@ -39,6 +39,9 @@ $(document).ready(function () {
                         topStart: {
                             buttons: [
                                 {
+                                    extend: 'pageLength'
+                                },
+                                {
                                     extend: 'colvis'
                                 },
                                 {
@@ -61,6 +64,8 @@ $(document).ready(function () {
                             colvis: 'Show/Hide Columns' // This will be used for all colvis buttons in this table
                         }
                     },
+                    "pageLength": 100,
+                    "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
                     scrollXInner: true,
                     scrollY: true,
                     colReorder: true,
