@@ -118,9 +118,38 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
             $executionInfoText = "<i style='font-size: 11px; color: #666;'>Execution time: ".number_format($execution_time, 2, '.', '')." sec</i>";
         }
         $setup_name = $settingTitles[$num];
-        $username = defined('USERID') ? USERID : '';
-        $sql = "INSERT INTO redcap_ai_chatbot_log (project_id, username, folder_id, setup_name, vs_id, question, user_question, response, user_response, execution_time, session_id, created_at)
-			            VALUES ('".$projectId."', '".$username."', '".$folderId."', '".db_escape($setup_name)."', '".$vsId."', '".db_escape($prompt)."', '".db_escape($_POST['prompt_text'])."', '".db_escape(json_encode($response))."', '".db_escape($userResText)."', '".$execution_time."', '".session_id()."', '".NOW."')";
+        if (defined('USERID')) {
+            $username = USERID;
+            $from_survey = 0;
+        } else {
+            $username = '';
+            $field = $module->getProjectSetting("survey_identifier")[$num];
+            $hash = (!is_null($_POST['survey_hash'])) ? $_POST['survey_hash'] : "";
+            if ($hash != '') {
+                // Ensure that hash exists. Retrieve ALL survey-related info and make all table fields into global variables
+                $sql = "select r.record from redcap_surveys_response r, redcap_surveys_participants p 
+				where p.hash = '".db_escape($hash)."' and p.participant_id = r.participant_id 
+				and p.participant_email is not null limit 1";
+                $q = db_query($sql);
+                $record = db_num_rows($q) ? db_result($q, 0) : false;
+
+                $data = \REDCap::getData([
+                    "project_id" => $projectId,
+                    "records" => [$record],
+                    "fields" => [$field],
+                    "return_format" => "json-array"
+                ]);
+                foreach($data as $recordDetails) {
+                    if ($recordDetails[$field] != '') {
+                        $username = $recordDetails[$field];
+                    }
+                }
+            }
+            $from_survey = 1;
+        }
+
+        $sql = "INSERT INTO redcap_ai_chatbot_log (project_id, username, folder_id, setup_name, vs_id, question, user_question, response, user_response, execution_time, session_id, created_at, from_survey)
+			            VALUES ('".$projectId."', '".$username."', '".$folderId."', '".db_escape($setup_name)."', '".$vsId."', '".db_escape($prompt)."', '".db_escape($_POST['prompt_text'])."', '".db_escape(json_encode($response))."', '".db_escape($userResText)."', '".$execution_time."', '".session_id()."', '".NOW."', '".$from_survey."')";
         db_query($sql);
 
         $resultText = "<div class='table-container'>

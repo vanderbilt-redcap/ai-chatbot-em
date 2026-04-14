@@ -320,10 +320,16 @@ function generateResponse(chatElement, setupNum) {
         url_param = getSettingNumParam();
     }
 
+    const url = new URL(window.location.href);
+    // Get the query parameters
+    const params = new URLSearchParams(url.search);
+    // Get the value of the 'location' parameter
+    survey_hash = params.get('s');
+
     $.ajax({
         method: 'POST',
         url: get_response_url+url_param+no_auth_param,
-        data: { prompt_text: userMessage, action: "generate"},
+        data: { prompt_text: userMessage, action: "generate", survey_hash: survey_hash},
         dataType: 'json'
     })
         .done(function(data) {
