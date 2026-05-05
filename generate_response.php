@@ -139,13 +139,11 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
                     "fields" => [$field],
                     "return_format" => "json-array"
                 ]);
-                print_r($data);
                 foreach($data as $recordDetails) {
                     if ($recordDetails[$field] != '') {
                         $username = $recordDetails[$field];
                     }
                 }
-                echo $username; die;
             }
             $from_survey = 1;
         }
