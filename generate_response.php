@@ -124,6 +124,8 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
         } else {
             $username = '';
             $field = $module->getProjectSetting("survey_identifier")[$num];
+            var_dump($_POST);
+            var_dump($_GET); die;
             $hash = (!is_null($_POST['survey_hash'])) ? $_POST['survey_hash'] : "";
             if ($hash != '') {
                 // Ensure that hash exists. Retrieve ALL survey-related info and make all table fields into global variables
