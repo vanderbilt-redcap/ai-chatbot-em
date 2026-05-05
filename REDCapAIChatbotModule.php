@@ -3,6 +3,7 @@
 namespace Vanderbilt\REDCapAIChatbotModule;
 
 use ExternalModules\AbstractExternalModule;
+use ExternalModules\ExternalModules;
 use Api;
 
 /**
@@ -36,16 +37,31 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
             if (PAGE != 'surveys/index.php') {
                 include "includes/index.html";
             }
+            $dataUri = "";
+            if ($this->getProjectSetting('logo') != '') {
+                $logo_info = $this->getProjectSetting('logo');
+                list ($mimeType, $logFileName, $fileContent) = \Files::getEdocContentsAttributes($logo_info[0]);
+                $dataUri = 'data:image/' . $mimeType . ';base64,' . base64_encode($fileContent);
+            }
+
             ?>
             <script>
                 var greetingTexts = <?php echo json_encode($this->getProjectSetting('greeting-text')); ?>;
                 var defaultGreetText = "Hi there <br>How can I help you today?";
+                var logFileName = "<?php echo $logFileName;?>";
+                var dataUri = "<?php echo $dataUri;?>";
                 if (greetingTexts[0] == undefined || greetingTexts[0] == '') {
                     greetingText = "Hi there <br>How can I help you today?";
                 } else {
                     greetingText = greetingTexts[0];
                 }
                 $("#greeting-text").html(greetingText);
+
+                if (logFileName != '') {
+                    $("#bot-logo").html('<img width="40" src="'+dataUri+'" />');
+                } else {
+                    $("#bot-logo").html('<i class="fas fa-robot"></i>');
+                }
             </script>
             <?php
         }
