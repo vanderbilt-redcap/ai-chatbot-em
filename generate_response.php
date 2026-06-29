@@ -22,10 +22,13 @@ $endpoint = rtrim($endpoints[$num], "/") . "/";
 $api_version = $api_versions[$num];*/
 $folderId = $folderIds[$num];
 
-$api_key = '81ce3b70e4f94439aaaf57c4682ba5f8';
-$endpoint = 'https://vumc-openai-16.openai.azure.com/openai/';
-$api_version = '2025-03-01-preview';
+// Load the .env file from your project root
+$module->loadEnv(__DIR__ . '/api-variables.env');
 
+$api_key = $_ENV['API_KEY'];
+$endpoint = $_ENV['API_ENDPOINT'];
+$api_version = $_ENV['API_VERSION'];
+$api_model = $_ENV['API_MODEL'];
 
 if (isset($_POST['action']) && $_POST['action'] == 'generate') {
     $debug = true;
@@ -70,7 +73,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'generate') {
         ];
         // Example conversation
         $data = [
-            'model' => 'gpt-4o-mini',
+            'model' => $api_model,
             'tools' => [
                 [
                     "type" => "file_search",
