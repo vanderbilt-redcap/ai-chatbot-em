@@ -410,4 +410,37 @@ class REDCapAIChatbotModule extends AbstractExternalModule {
             echo "Something went wrong";
         }
     }
+
+    function loadEnv($filePath)
+    {
+        if (!file_exists($filePath)) {
+            return false;
+        }
+
+        // Read the file into an array of lines
+        $lines = file($filePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+
+        foreach ($lines as $line) {
+            // Skip comment lines starting with #
+            if (strpos(trim($line), '#') === 0) {
+                continue;
+            }
+
+            // Split the line into name and value at the first '=' character
+            list($name, $value) = explode('=', $line, 2);
+
+            $name = trim($name);
+            $value = trim($value);
+
+            // Remove surrounding quotes if they exist
+            $value = trim($value, "\"'");
+
+            // Set the variable in PHP environment systems
+            putenv(sprintf('%s=%s', $name, $value));
+            $_ENV[$name] = $value;
+            $_SERVER[$name] = $value;
+        }
+        return true;
+    }
+
 }
