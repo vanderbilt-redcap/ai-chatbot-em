@@ -24,7 +24,7 @@ $folderId = $folderIds[$num];
 
 // Load the .env file from your project root
 $module->loadEnv(__DIR__ . '/api-variables.env');
-print_r($_ENV); die;
+
 $api_key = $_ENV['API_KEY'];
 $endpoint = $_ENV['API_ENDPOINT'];
 $api_version = $_ENV['API_VERSION'];
